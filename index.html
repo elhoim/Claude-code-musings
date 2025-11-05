@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mumbai Family Adventure - 21 Days of Discovery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #FF6B35;
+            --secondary-color: #004E89;
+            --accent-color: #F77F00;
+            --light-bg: #F7F9FB;
+            --dark-text: #1A2238;
+            --light-text: #6B7280;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background-color: var(--light-bg);
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "✈️";
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--gradient-2);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Styles */
+        section {
+            margin: 4rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .section-header p {
+            color: var(--light-text);
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Budget Section */
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .budget-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .budget-card:nth-child(2) { border-top-color: var(--secondary-color); }
+        .budget-card:nth-child(3) { border-top-color: var(--accent-color); }
+        .budget-card:nth-child(4) { border-top-color: var(--success-color); }
+
+        .budget-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .budget-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .budget-title {
+            font-size: 1.2rem;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .budget-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .budget-details {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        /* Budget Chart */
+        .budget-visual {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+        }
+
+        .chart-bar {
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .chart-progress {
+            height: 30px;
+            background: #E5E7EB;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-fill {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1rem;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .chart-fill-1 { background: var(--gradient-1); }
+        .chart-fill-2 { background: var(--gradient-2); }
+        .chart-fill-3 { background: var(--gradient-3); }
+        .chart-fill-4 { background: var(--gradient-4); }
+        .chart-fill-5 { background: var(--gradient-5); }
+
+        /* Itinerary Timeline */
+        .itinerary-filters {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            margin-bottom: 3rem;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item:nth-child(odd) {
+            padding-right: 50%;
+            padding-left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            padding-left: 50%;
+            padding-right: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+            margin: 0 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: 3rem;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 3rem;
+        }
+
+        .day-number {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .day-title {
+            font-size: 1.5rem;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .day-subtitle {
+            color: var(--light-text);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .activity-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .activity-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--dark-text);
+        }
+
+        .activity-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .day-cost {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cost-label {
+            color: var(--light-text);
+            font-weight: 600;
+        }
+
+        .cost-amount {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .activity-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tag-kids {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .tag-culture {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .tag-nature {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .tag-adventure {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .tag-relax {
+            background: #E9D5FF;
+            color: #7C3AED;
+        }
+
+        .tag-food {
+            background: #FFEDD5;
+            color: #EA580C;
+        }
+
+        /* Family Highlights */
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .highlight-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-1);
+        }
+
+        .highlight-card:nth-child(2)::before { background: var(--gradient-2); }
+        .highlight-card:nth-child(3)::before { background: var(--gradient-3); }
+        .highlight-card:nth-child(4)::before { background: var(--gradient-4); }
+        .highlight-card:nth-child(5)::before { background: var(--gradient-5); }
+        .highlight-card:nth-child(6)::before { background: var(--gradient-1); }
+
+        .highlight-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .highlight-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-title {
+            font-size: 1.5rem;
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .highlight-description {
+            color: var(--light-text);
+            line-height: 1.8;
+        }
+
+        /* Packing List */
+        .packing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .packing-category {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+        }
+
+        .packing-list {
+            list-style: none;
+        }
+
+        .packing-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--dark-text);
+            border-bottom: 1px solid #F3F4F6;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .packing-list li:hover {
+            background: #F9FAFB;
+        }
+
+        .packing-list li::before {
+            content: "□";
+            position: absolute;
+            left: 0;
+            color: var(--light-text);
+            font-size: 1.3rem;
+        }
+
+        .packing-list li.checked::before {
+            content: "☑";
+            color: var(--success-color);
+        }
+
+        /* Tips Section */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .tip-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .tip-card:nth-child(even) {
+            border-left-color: var(--secondary-color);
+        }
+
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tip-icon {
+            font-size: 2rem;
+        }
+
+        .tip-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .tip-content {
+            color: var(--light-text);
+            line-height: 1.8;
+        }
+
+        /* FAQ Section */
+        .faq-list {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark-text);
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #F9FAFB;
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .faq-answer-content {
+            padding: 0 2rem 1.5rem 2rem;
+            color: var(--light-text);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-text);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-content p {
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Interactive Budget Calculator */
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-top: 2rem;
+        }
+
+        .calculator h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark-text);
+        }
+
+        .calculator-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .control-group input,
+        .control-group select {
+            padding: 0.75rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .calculator-result {
+            background: var(--gradient-1);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .hero-stats {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                padding: 1rem 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                padding-left: 80px !important;
+                padding-right: 0 !important;
+            }
+
+            .timeline-content {
+                margin: 0 !important;
+            }
+
+            .day-number {
+                left: 30px;
+            }
+
+            .budget-grid,
+            .highlights-grid,
+            .packing-grid,
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Print Styles */
+        @media print {
+            header,
+            .filter-btn,
+            .calculator,
+            .scroll-top {
+                display: none;
+            }
+
+            .timeline-item {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">Mumbai Family Adventure</div>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#budget">Budget</a></li>
+                <li><a href="#itinerary">Itinerary</a></li>
+                <li><a href="#highlights">Highlights</a></li>
+                <li><a href="#packing">Packing</a></li>
+                <li><a href="#tips">Tips</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>🌍 Brussels to Mumbai</h1>
+            <p class="hero-subtitle">An Unforgettable 21-Day Family Adventure</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">21</span>
+                    <span class="stat-label">Days</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">Travelers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">€11,000</span>
+                    <span class="stat-label">Budget</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">∞</span>
+                    <span class="stat-label">Memories</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="container">
+        <div class="section-header">
+            <h2>Your Journey Awaits</h2>
+            <p>A carefully crafted 21-day adventure through Mumbai and Western India, designed specifically for your family of 5. Experience vibrant culture, stunning landscapes, delicious cuisine, and unforgettable moments that will last a lifetime.</p>
+        </div>
+
+        <div class="highlights-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="highlight-card">
+                <div class="highlight-icon">👨‍👩‍👧‍👦</div>
+                <div class="highlight-title">Family-Friendly</div>
+                <div class="highlight-description">Activities tailored for ages 4, 10, and 12, ensuring everyone has an amazing time.</div>
+            </div>
+            <div class="highlight-card">
+                <div class="highlight-icon">🏛️</div>
+                <div class="highlight-title">Cultural Immersion</div>
+                <div class="highlight-description">Explore ancient forts, temples, and UNESCO World Heritage sites.</div>
+            </div>
+            <div class="highlight-card">
+                <div class="highlight-icon">🍛</div>
+                <div class="highlight-title">Culinary Adventure</div>
+                <div class="highlight-description">Savor authentic Indian cuisine with kid-friendly options everywhere.</div>
+            </div>
+            <div class="highlight-card">
+                <div class="highlight-icon">🏖️</div>
+                <div class="highlight-title">Beach Paradise</div>
+                <div class="highlight-description">Relax on pristine Goa beaches with water sports and sunset views.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Budget Section -->
+    <section id="budget" class="container">
+        <div class="section-header">
+            <h2>Budget Breakdown</h2>
+            <p>Complete transparency: Here's exactly how your €11,000 is allocated across 21 days for 5 people</p>
+        </div>
+
+        <div class="budget-grid">
+            <div class="budget-card">
+                <div class="budget-icon">✈️</div>
+                <div class="budget-title">Flights</div>
+                <div class="budget-amount">€3,500</div>
+                <div class="budget-details">
+                    • Round-trip Brussels-Mumbai (5 pax)<br>
+                    • Economy class with baggage<br>
+                    • €700 per person
+                </div>
+            </div>
+
+            <div class="budget-card">
+                <div class="budget-icon">🏨</div>
+                <div class="budget-title">Accommodation</div>
+                <div class="budget-amount">€2,800</div>
+                <div class="budget-details">
+                    • 20 nights total<br>
+                    • Family rooms & apartments<br>
+                    • Mix of 3-4 star hotels<br>
+                    • €140 per night average
+                </div>
+            </div>
+
+            <div class="budget-card">
+                <div class="budget-icon">🍽️</div>
+                <div class="budget-title">Food & Dining</div>
+                <div class="budget-amount">€2,100</div>
+                <div class="budget-details">
+                    • 3 meals per day<br>
+                    • Mix of restaurants & local eateries<br>
+                    • €100 per day for family<br>
+                    • Includes snacks & drinks
+                </div>
+            </div>
+
+            <div class="budget-card">
+                <div class="budget-icon">🎭</div>
+                <div class="budget-title">Activities & Transport</div>
+                <div class="budget-amount">€2,100</div>
+                <div class="budget-details">
+                    • Entry fees & guided tours<br>
+                    • Local transportation<br>
+                    • Day trips & excursions<br>
+                    • Water activities
+                </div>
+            </div>
+
+            <div class="budget-card">
+                <div class="budget-icon">💰</div>
+                <div class="budget-title">Emergency Fund</div>
+                <div class="budget-amount">€500</div>
+                <div class="budget-details">
+                    • Medical emergencies<br>
+                    • Unexpected expenses<br>
+                    • Shopping buffer<br>
+                    • Extra activities
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Visualization -->
+        <div class="budget-visual">
+            <h3 style="margin-bottom: 2rem; color: var(--dark-text); font-size: 1.5rem;">Budget Distribution</h3>
+            <div class="chart-container">
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Flights</span>
+                        <span>€3,500 (32%)</span>
+                    </div>
+                    <div class="chart-progress">
+                        <div class="chart-fill chart-fill-1" data-width="32" style="width: 0;">32%</div>
+                    </div>
+                </div>
+
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Accommodation</span>
+                        <span>€2,800 (25%)</span>
+                    </div>
+                    <div class="chart-progress">
+                        <div class="chart-fill chart-fill-2" data-width="25" style="width: 0;">25%</div>
+                    </div>
+                </div>
+
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Food & Dining</span>
+                        <span>€2,100 (19%)</span>
+                    </div>
+                    <div class="chart-progress">
+                        <div class="chart-fill chart-fill-3" data-width="19" style="width: 0;">19%</div>
+                    </div>
+                </div>
+
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Activities & Transport</span>
+                        <span>€2,100 (19%)</span>
+                    </div>
+                    <div class="chart-progress">
+                        <div class="chart-fill chart-fill-4" data-width="19" style="width: 0;">19%</div>
+                    </div>
+                </div>
+
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Emergency Fund</span>
+                        <span>€500 (5%)</span>
+                    </div>
+                    <div class="chart-progress">
+                        <div class="chart-fill chart-fill-5" data-width="5" style="width: 0;">5%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Calculator -->
+        <div class="calculator">
+            <h3>💡 Custom Budget Calculator</h3>
+            <p style="color: var(--light-text); margin-bottom: 1.5rem;">Adjust the parameters to see how the budget changes</p>
+
+            <div class="calculator-controls">
+                <div class="control-group">
+                    <label for="calc-days">Number of Days</label>
+                    <input type="number" id="calc-days" value="21" min="1" max="30">
+                </div>
+                <div class="control-group">
+                    <label for="calc-people">Number of People</label>
+                    <input type="number" id="calc-people" value="5" min="1" max="10">
+                </div>
+                <div class="control-group">
+                    <label for="calc-accommodation">Accommodation Type</label>
+                    <select id="calc-accommodation">
+                        <option value="budget">Budget (€80/night)</option>
+                        <option value="standard" selected>Standard (€140/night)</option>
+                        <option value="luxury">Luxury (€250/night)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="calculator-result">
+                <div class="result-label">Estimated Total Cost</div>
+                <div class="result-value" id="calc-result">€11,000</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Itinerary Section -->
+    <section id="itinerary" class="container">
+        <div class="section-header">
+            <h2>21-Day Detailed Itinerary</h2>
+            <p>A day-by-day guide to your Mumbai adventure, with activities perfect for the whole family</p>
+        </div>
+
+        <div class="itinerary-filters">
+            <button class="filter-btn active" data-filter="all">All Days</button>
+            <button class="filter-btn" data-filter="kids">Kid-Friendly</button>
+            <button class="filter-btn" data-filter="culture">Culture</button>
+            <button class="filter-btn" data-filter="nature">Nature</button>
+            <button class="filter-btn" data-filter="relax">Relaxation</button>
+        </div>
+
+        <div class="timeline">
+            <!-- Day 1 -->
+            <div class="timeline-item" data-categories="kids relax">
+                <div class="day-number">1</div>
+                <div class="timeline-content">
+                    <div class="day-title">Arrival in Mumbai</div>
+                    <div class="day-subtitle">Welcome to the City of Dreams!</div>
+                    <ul class="activity-list">
+                        <li>Arrive at Chhatrapati Shivaji International Airport</li>
+                        <li>Private transfer to hotel in Colaba area</li>
+                        <li>Check-in and rest after the long flight</li>
+                        <li>Evening stroll at Gateway of India</li>
+                        <li>Welcome dinner at Britannia & Co. (family-friendly Parsi cuisine)</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-relax">Relaxation</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€150</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2 -->
+            <div class="timeline-item" data-categories="kids culture">
+                <div class="day-number">2</div>
+                <div class="timeline-content">
+                    <div class="day-title">South Mumbai Exploration</div>
+                    <div class="day-subtitle">Colonial Heritage & Seaside Fun</div>
+                    <ul class="activity-list">
+                        <li>Visit Chhatrapati Shivaji Terminus (UNESCO site) - architectural marvel</li>
+                        <li>Explore Mani Bhavan Gandhi Museum (kids love the interactive displays)</li>
+                        <li>Lunch at Swati Snacks (authentic Gujarati thali)</li>
+                        <li>Afternoon at Marine Drive - "Queen's Necklace"</li>
+                        <li>Sunset at Chowpatty Beach with street food tasting</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€120</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="timeline-item" data-categories="kids culture adventure">
+                <div class="day-number">3</div>
+                <div class="timeline-content">
+                    <div class="day-title">Elephanta Caves Day Trip</div>
+                    <div class="day-subtitle">Ancient Rock-Cut Temples</div>
+                    <ul class="activity-list">
+                        <li>Morning ferry from Gateway of India to Elephanta Island</li>
+                        <li>Explore UNESCO World Heritage Elephanta Caves</li>
+                        <li>Kids can spot monkeys and enjoy the toy train ride</li>
+                        <li>Picnic lunch on the island</li>
+                        <li>Return to Mumbai, evening at Colaba Causeway shopping</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€110</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 4 -->
+            <div class="timeline-item" data-categories="kids culture food">
+                <div class="day-number">4</div>
+                <div class="timeline-content">
+                    <div class="day-title">Markets & Bollywood</div>
+                    <div class="day-subtitle">Colors, Spices & Cinema Magic</div>
+                    <ul class="activity-list">
+                        <li>Morning walking tour of Crawford Market and spice bazaars</li>
+                        <li>Visit Dhobi Ghat - world's largest outdoor laundry</li>
+                        <li>Lunch at Britannia Restaurant</li>
+                        <li>Afternoon Bollywood studio tour (kids will love this!)</li>
+                        <li>Evening at Phoenix Marketcity mall for dinner and shopping</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                        <span class="tag tag-food">Food</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€140</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 5 -->
+            <div class="timeline-item" data-categories="kids nature">
+                <div class="day-number">5</div>
+                <div class="timeline-content">
+                    <div class="day-title">Nature & Science Day</div>
+                    <div class="day-subtitle">Learning Through Play</div>
+                    <ul class="activity-list">
+                        <li>Morning at Sanjay Gandhi National Park - mini safari</li>
+                        <li>Kanheri Caves exploration within the park</li>
+                        <li>Lunch at park cafe</li>
+                        <li>Afternoon at Nehru Science Centre (interactive exhibits for kids)</li>
+                        <li>Evening at Bandra Bandstand promenade</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-nature">Nature</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€100</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 6 -->
+            <div class="timeline-item" data-categories="kids adventure">
+                <div class="day-number">6</div>
+                <div class="timeline-content">
+                    <div class="day-title">Mumbai Fun Parks</div>
+                    <div class="day-subtitle">Thrills & Entertainment</div>
+                    <ul class="activity-list">
+                        <li>Full day at EsselWorld & Water Kingdom</li>
+                        <li>India's largest amusement and water park</li>
+                        <li>Rides suitable for all ages (special areas for 4-year-old)</li>
+                        <li>Lunch at park restaurants</li>
+                        <li>Return to hotel for rest</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€160</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 7 -->
+            <div class="timeline-item" data-categories="kids culture adventure">
+                <div class="day-number">7</div>
+                <div class="timeline-content">
+                    <div class="day-title">Journey to Lonavala</div>
+                    <div class="day-subtitle">Hill Station Escape</div>
+                    <ul class="activity-list">
+                        <li>Morning drive to Lonavala (2 hours from Mumbai)</li>
+                        <li>Check into family-friendly resort</li>
+                        <li>Visit Karla and Bhaja Caves (ancient Buddhist rock-cut temples)</li>
+                        <li>Explore Lion's Point for panoramic valley views</li>
+                        <li>Try local chikki (brittle candy) that kids love</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€130</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 8 -->
+            <div class="timeline-item" data-categories="kids nature adventure">
+                <div class="day-number">8</div>
+                <div class="timeline-content">
+                    <div class="day-title">Lonavala Adventures</div>
+                    <div class="day-subtitle">Waterfalls & Nature Trails</div>
+                    <ul class="activity-list">
+                        <li>Morning trek to Rajmachi Fort (moderate, suitable for kids 10+)</li>
+                        <li>Visit Bushi Dam - kids can play in the water</li>
+                        <li>Lunch at resort</li>
+                        <li>Afternoon at Pawna Lake for boating</li>
+                        <li>Evening bonfire at resort (kids activities organized)</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-nature">Nature</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€120</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 9 -->
+            <div class="timeline-item" data-categories="culture adventure">
+                <div class="day-number">9</div>
+                <div class="timeline-content">
+                    <div class="day-title">Pune City Exploration</div>
+                    <div class="day-subtitle">Cultural & Historical Journey</div>
+                    <ul class="activity-list">
+                        <li>Drive to Pune (1 hour from Lonavala)</li>
+                        <li>Visit Shaniwar Wada Fort Palace</li>
+                        <li>Explore Aga Khan Palace (Gandhi history)</li>
+                        <li>Lunch at traditional Puneri restaurant</li>
+                        <li>Afternoon at Raja Dinkar Kelkar Museum (fascinating artifacts)</li>
+                        <li>Return to Lonavala</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-culture">Culture</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€110</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 10 -->
+            <div class="timeline-item" data-categories="kids culture adventure">
+                <div class="day-number">10</div>
+                <div class="timeline-content">
+                    <div class="day-title">Ajanta & Ellora Prep</div>
+                    <div class="day-subtitle">Journey to Aurangabad</div>
+                    <ul class="activity-list">
+                        <li>Flight from Mumbai to Aurangabad (consider flying to save travel time)</li>
+                        <li>Check into family hotel</li>
+                        <li>Visit Bibi Ka Maqbara ("Mini Taj Mahal")</li>
+                        <li>Explore local bazaar for handicrafts</li>
+                        <li>Early dinner and rest for next day's adventures</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€200</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 11 -->
+            <div class="timeline-item" data-categories="culture adventure">
+                <div class="day-number">11</div>
+                <div class="timeline-content">
+                    <div class="day-title">Ellora Caves Wonder</div>
+                    <div class="day-subtitle">UNESCO World Heritage Marvel</div>
+                    <ul class="activity-list">
+                        <li>Full day trip to Ellora Caves (30km from Aurangabad)</li>
+                        <li>Explore 34 rock-cut temples and monasteries</li>
+                        <li>Marvel at Kailash Temple - world's largest monolithic structure</li>
+                        <li>Packed lunch or cafe at site</li>
+                        <li>Kids enjoy the "treasure hunt" style exploration</li>
+                        <li>Return to Aurangabad for dinner</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-culture">Culture</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€130</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 12 -->
+            <div class="timeline-item" data-categories="culture adventure">
+                <div class="day-number">12</div>
+                <div class="timeline-content">
+                    <div class="day-title">Ajanta Caves Expedition</div>
+                    <div class="day-subtitle">Ancient Buddhist Art Gallery</div>
+                    <ul class="activity-list">
+                        <li>Early departure to Ajanta Caves (100km, 2.5 hours)</li>
+                        <li>Explore 29 caves with stunning frescoes and sculptures</li>
+                        <li>Guided tour explaining Buddhist stories (engaging for kids)</li>
+                        <li>Lunch near caves</li>
+                        <li>Return to Aurangabad</li>
+                        <li>Evening at leisure</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-culture">Culture</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€130</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 13 -->
+            <div class="timeline-item" data-categories="kids relax">
+                <div class="day-number">13</div>
+                <div class="timeline-content">
+                    <div class="day-title">Journey to Goa</div>
+                    <div class="day-subtitle">Beach Paradise Awaits</div>
+                    <ul class="activity-list">
+                        <li>Flight from Aurangabad to Goa</li>
+                        <li>Check into beach resort in North Goa (Calangute/Candolim area)</li>
+                        <li>Afternoon beach time - let kids play in the sand</li>
+                        <li>Sunset at Candolim Beach</li>
+                        <li>Seafood dinner at beach shack</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-relax">Relaxation</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€180</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 14 -->
+            <div class="timeline-item" data-categories="kids nature adventure">
+                <div class="day-number">14</div>
+                <div class="timeline-content">
+                    <div class="day-title">North Goa Beach Day</div>
+                    <div class="day-subtitle">Water Sports & Sun</div>
+                    <ul class="activity-list">
+                        <li>Morning at Baga Beach - water sports available</li>
+                        <li>Parasailing, jet skiing, banana boat rides (kids 10+ can participate)</li>
+                        <li>Beach volleyball and sandcastle building for the 4-year-old</li>
+                        <li>Lunch at beach restaurant</li>
+                        <li>Afternoon exploring Fort Aguada</li>
+                        <li>Evening at Anjuna Flea Market</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-nature">Nature</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€150</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 15 -->
+            <div class="timeline-item" data-categories="kids culture">
+                <div class="day-number">15</div>
+                <div class="timeline-content">
+                    <div class="day-title">Old Goa Heritage</div>
+                    <div class="day-subtitle">Portuguese Colonial History</div>
+                    <ul class="activity-list">
+                        <li>Visit Basilica of Bom Jesus (UNESCO site)</li>
+                        <li>Explore Se Cathedral</li>
+                        <li>Church of St. Francis of Assisi & Archaeological Museum</li>
+                        <li>Traditional Goan lunch at Fernando's</li>
+                        <li>Afternoon river cruise on Mandovi River with dolphin watching</li>
+                        <li>Kids love spotting dolphins!</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€120</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 16 -->
+            <div class="timeline-item" data-categories="kids nature adventure">
+                <div class="day-number">16</div>
+                <div class="timeline-content">
+                    <div class="day-title">Spice Plantation Adventure</div>
+                    <div class="day-subtitle">Nature & Wildlife</div>
+                    <ul class="activity-list">
+                        <li>Morning tour of organic spice plantation</li>
+                        <li>Learn about cardamom, pepper, vanilla, cinnamon</li>
+                        <li>Traditional Goan lunch at plantation</li>
+                        <li>Elephant interaction experience (ethical sanctuary)</li>
+                        <li>Afternoon at Dudhsagar Waterfalls (4x4 jeep adventure)</li>
+                        <li>Swimming at waterfall base</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-nature">Nature</span>
+                        <span class="tag tag-adventure">Adventure</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€140</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 17 -->
+            <div class="timeline-item" data-categories="kids relax">
+                <div class="day-number">17</div>
+                <div class="timeline-content">
+                    <div class="day-title">South Goa Serenity</div>
+                    <div class="day-subtitle">Peaceful Beach Exploration</div>
+                    <ul class="activity-list">
+                        <li>Drive to South Goa beaches (less crowded)</li>
+                        <li>Morning at Palolem Beach - crescent-shaped paradise</li>
+                        <li>Kayaking in calm waters (safe for kids)</li>
+                        <li>Lunch at beach hut</li>
+                        <li>Visit Cabo de Rama Fort for sunset views</li>
+                        <li>Return to North Goa resort</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-relax">Relaxation</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€110</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 18 -->
+            <div class="timeline-item" data-categories="kids relax food">
+                <div class="day-number">18</div>
+                <div class="timeline-content">
+                    <div class="day-title">Goa Leisure Day</div>
+                    <div class="day-subtitle">Relax & Recharge</div>
+                    <ul class="activity-list">
+                        <li>Slow morning - sleep in!</li>
+                        <li>Resort pool time and beach activities</li>
+                        <li>Optional cooking class - learn to make Goan fish curry</li>
+                        <li>Kids can help make simple Indian breads</li>
+                        <li>Afternoon spa time for parents (kids club available)</li>
+                        <li>Evening shopping at Mapusa Market</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-relax">Relaxation</span>
+                        <span class="tag tag-food">Food</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€130</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 19 -->
+            <div class="timeline-item" data-categories="kids culture">
+                <div class="day-number">19</div>
+                <div class="timeline-content">
+                    <div class="day-title">Return to Mumbai</div>
+                    <div class="day-subtitle">Last Adventures</div>
+                    <ul class="activity-list">
+                        <li>Morning flight from Goa to Mumbai</li>
+                        <li>Check into hotel near airport</li>
+                        <li>Afternoon at Jio World Drive - entertainment complex</li>
+                        <li>Visit Imagica Theme Park (if not done earlier)</li>
+                        <li>Dinner at Bademiya (iconic street food restaurant)</li>
+                        <li>Last-minute souvenir shopping</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-culture">Culture</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€180</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 20 -->
+            <div class="timeline-item" data-categories="kids relax">
+                <div class="day-number">20</div>
+                <div class="timeline-content">
+                    <div class="day-title">Final Mumbai Day</div>
+                    <div class="day-subtitle">Memories & Goodbyes</div>
+                    <ul class="activity-list">
+                        <li>Leisurely breakfast at hotel</li>
+                        <li>Visit Haji Ali Dargah (stunning mosque on the sea)</li>
+                        <li>Lunch at Leopold Cafe (historic landmark)</li>
+                        <li>Afternoon at High Street Phoenix or Palladium mall</li>
+                        <li>Final family dinner at The Bombay Canteen</li>
+                        <li>Pack and prepare for departure</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-kids">Kids Friendly</span>
+                        <span class="tag tag-relax">Relaxation</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€120</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 21 -->
+            <div class="timeline-item" data-categories="relax">
+                <div class="day-number">21</div>
+                <div class="timeline-content">
+                    <div class="day-title">Departure</div>
+                    <div class="day-subtitle">Until We Meet Again, India!</div>
+                    <ul class="activity-list">
+                        <li>Hotel breakfast and check-out</li>
+                        <li>Last-minute shopping if time permits</li>
+                        <li>Private transfer to airport</li>
+                        <li>Flight back to Brussels with unforgettable memories</li>
+                        <li>Arrival home with hearts full of joy</li>
+                    </ul>
+                    <div class="activity-tags">
+                        <span class="tag tag-relax">Relaxation</span>
+                    </div>
+                    <div class="day-cost">
+                        <span class="cost-label">Daily Budget</span>
+                        <span class="cost-amount">€80</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Family Highlights -->
+    <section id="highlights" class="container">
+        <div class="section-header">
+            <h2>Family Highlights</h2>
+            <p>Special experiences designed for every family member</p>
+        </div>
+
+        <div class="highlights-grid">
+            <div class="highlight-card">
+                <div class="highlight-icon">🎢</div>
+                <div class="highlight-title">For the 4-Year-Old</div>
+                <div class="highlight-description">
+                    <strong>Perfect Activities:</strong><br>
+                    • EsselWorld kiddie rides<br>
+                    • Beach sandcastle building<br>
+                    • Elephant interaction at spice plantation<br>
+                    • Dolphin watching cruise<br>
+                    • Hotel kids clubs with supervised play<br>
+                    • Simple cooking activities
+                </div>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">🏰</div>
+                <div class="highlight-title">For the 10-Year-Old</div>
+                <div class="highlight-description">
+                    <strong>Adventure Awaits:</strong><br>
+                    • Cave explorations (treasure hunt style)<br>
+                    • Water sports in Goa<br>
+                    • Moderate trekking at Lonavala<br>
+                    • Science center interactive exhibits<br>
+                    • Bollywood studio tour<br>
+                    • Fort explorations
+                </div>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">🚁</div>
+                <div class="highlight-title">For the 12-Year-Old</div>
+                <div class="highlight-description">
+                    <strong>Teen-Friendly Fun:</strong><br>
+                    • All water sports activities<br>
+                    • Photography at UNESCO sites<br>
+                    • Street food tasting tours<br>
+                    • Shopping at local markets<br>
+                    • Cultural performances<br>
+                    • Longer trekking adventures
+                </div>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">🧘</div>
+                <div class="highlight-title">For Parents (42 & 43)</div>
+                <div class="highlight-description">
+                    <strong>Relax & Enjoy:</strong><br>
+                    • Spa treatments in Goa<br>
+                    • Sunset views at multiple locations<br>
+                    • Historical & cultural deep dives<br>
+                    • Culinary experiences<br>
+                    • Photography opportunities<br>
+                    • Quality family time
+                </div>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">🍛</div>
+                <div class="highlight-title">Culinary Journey</div>
+                <div class="highlight-description">
+                    <strong>Food Adventures:</strong><br>
+                    • Street food at Chowpatty Beach<br>
+                    • Traditional Parsi cuisine<br>
+                    • Goan seafood feasts<br>
+                    • Authentic thalis<br>
+                    • Cooking class experience<br>
+                    • Kid-friendly options everywhere
+                </div>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">📸</div>
+                <div class="highlight-title">Instagram Moments</div>
+                <div class="highlight-description">
+                    <strong>Picture Perfect:</strong><br>
+                    • Gateway of India at sunset<br>
+                    • Kailash Temple, Ellora<br>
+                    • Palolem Beach panoramas<br>
+                    • Colorful spice markets<br>
+                    • Dudhsagar Waterfalls<br>
+                    • Family photos at every location
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packing List -->
+    <section id="packing" class="container">
+        <div class="section-header">
+            <h2>Smart Packing List</h2>
+            <p>Everything your family needs for 21 days in India - click items to check them off!</p>
+        </div>
+
+        <div class="packing-grid">
+            <div class="packing-category">
+                <div class="category-header">
+                    <span class="category-icon">👕</span>
+                    <span>Clothing</span>
+                </div>
+                <ul class="packing-list">
+                    <li>Lightweight, breathable clothes</li>
+                    <li>Modest attire for temples</li>
+                    <li>Swimwear for all family members</li>
+                    <li>Light jacket for AC spaces</li>
+                    <li>Comfortable walking shoes</li>
+                    <li>Sandals/flip-flops for beach</li>
+                    <li>Hat and sunglasses for everyone</li>
+                    <li>Sleepwear</li>
+                </ul>
+            </div>
+
+            <div class="packing-category">
+                <div class="category-header">
+                    <span class="category-icon">💊</span>
+                    <span>Health & Safety</span>
+                </div>
+                <ul class="packing-list">
+                    <li>Prescription medications</li>
+                    <li>First aid kit</li>
+                    <li>Hand sanitizer & wet wipes</li>
+                    <li>Sunscreen (SPF 50+)</li>
+                    <li>Insect repellent</li>
+                    <li>Diarrhea medication</li>
+                    <li>Children's pain reliever</li>
+                    <li>Motion sickness tablets</li>
+                    <li>Electrolyte packets</li>
+                </ul>
+            </div>
+
+            <div class="packing-category">
+                <div class="category-header">
+                    <span class="category-icon">📱</span>
+                    <span>Electronics</span>
+                </div>
+                <ul class="packing-list">
+                    <li>Smartphones & chargers</li>
+                    <li>Power bank (essential!)</li>
+                    <li>Universal adapter (India uses Type D/M)</li>
+                    <li>Camera & memory cards</li>
+                    <li>Headphones for flights</li>
+                    <li>Tablet for kids entertainment</li>
+                    <li>E-reader for downtime</li>
+                </ul>
+            </div>
+
+            <div class="packing-category">
+                <div class="category-header">
+                    <span class="category-icon">📄</span>
+                    <span>Documents</span>
+                </div>
+                <ul class="packing-list">
+                    <li>Passports (valid 6+ months)</li>
+                    <li>Visa documents/e-visa printout</li>
+                    <li>Travel insurance papers</li>
+                    <li>Hotel confirmations</li>
+                    <li>Flight tickets</li>
+                    <li>Emergency contact list</li>
+                    <li>Vaccination certificates</li>
+                    <li>Photocopies of all documents</li>
+                </ul>
+            </div>
+
+            <div class="packing-category">
+                <div class="category-header">
+                    <span class="category-icon">🎒</span>
+                    <span>Kids Essentials</span>
+                </div>
+                <ul class="packing-list">
+                    <li>Favorite snacks from home</li>
+                    <li>Small toys for travel</li>
+                    <li>Coloring books & crayons</li>
+                    <li>Water bottles for each child</li>
+                    <li>Baby wipes (even for older kids)</li>
+                    <li>Small backpacks for kids</li>
+                    <li>Comfort items (stuffed animal, etc.)</li>
+                    <li>Travel games & cards</li>
+                </ul>
+            </div>
+
+            <div class="packing-category">
+                <div class="category-header">
+                    <span class="category-icon">🎯</span>
+                    <span>Other Essentials</span>
+                </div>
+                <ul class="packing-list">
+                    <li>Reusable water bottles</li>
+                    <li>Day backpack</li>
+                    <li>Ziploc bags (various sizes)</li>
+                    <li>Laundry detergent packets</li>
+                    <li>Travel umbrella</li>
+                    <li>Plastic bags for wet clothes</li>
+                    <li>Notepad & pen</li>
+                    <li>Guidebook or maps</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Travel Tips -->
+    <section id="tips" class="container">
+        <div class="section-header">
+            <h2>Essential Travel Tips</h2>
+            <p>Expert advice to make your Mumbai adventure smooth and enjoyable</p>
+        </div>
+
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">💧</span>
+                    <div class="tip-title">Stay Hydrated</div>
+                </div>
+                <div class="tip-content">
+                    Only drink bottled water. Carry water bottles everywhere. India can be hot and humid, especially for kids. Avoid ice in drinks unless at reputable hotels. Coconut water is excellent and safe!
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🍽️</span>
+                    <div class="tip-title">Food Safety</div>
+                </div>
+                <div class="tip-content">
+                    Stick to cooked foods, avoid street food initially until your stomach adjusts. Peel fruits yourself. Choose busy restaurants (high turnover = fresh food). Most hotels offer mild options for kids.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🚕</span>
+                    <div class="tip-title">Transportation</div>
+                </div>
+                <div class="tip-content">
+                    Use Uber/Ola apps for reliable transport. Pre-book airport transfers. For long journeys, hire a driver for the day (safer with kids). Always negotiate auto-rickshaw fares beforehand.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">💰</span>
+                    <div class="tip-title">Money Matters</div>
+                </div>
+                <div class="tip-content">
+                    Carry cash (small denominations). ATMs widely available but notify your bank. Credit cards accepted in major establishments. Keep emergency cash separate. Tipping: 10% at restaurants.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">👗</span>
+                    <div class="tip-title">Dress Code</div>
+                </div>
+                <div class="tip-content">
+                    Dress modestly at religious sites (shoulders and knees covered). Remove shoes when entering temples. Light, breathable fabrics recommended. Kids can dress comfortably but modestly.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">📱</span>
+                    <div class="tip-title">Stay Connected</div>
+                </div>
+                <div class="tip-content">
+                    Buy local SIM card at airport (Airtel/Jio). Need passport photo and copy. Data is cheap and coverage good. Download offline maps. Share live location with family when separated.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🏥</span>
+                    <div class="tip-title">Health Precautions</div>
+                </div>
+                <div class="tip-content">
+                    Vaccinations: Hepatitis A, Typhoid recommended. Malaria risk low in cities but take precautions. Travel insurance mandatory. Know nearest hospital location. Carry basic medicines from home.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">⏰</span>
+                    <div class="tip-title">Time Management</div>
+                </div>
+                <div class="tip-content">
+                    Traffic can be unpredictable. Start early to beat crowds and heat. Build in downtime for kids. Most attractions close on Mondays. Book popular sites online in advance to skip queues.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🛡️</span>
+                    <div class="tip-title">Safety First</div>
+                </div>
+                <div class="tip-content">
+                    Mumbai is generally safe for tourists. Watch belongings in crowded areas. Use hotel safe for valuables. Hold kids' hands in busy markets. Be cautious of overly friendly strangers.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🌡️</span>
+                    <div class="tip-title">Weather Wisdom</div>
+                </div>
+                <div class="tip-content">
+                    Best time: November-February (cooler, dry). Expect 25-30°C temperatures. High humidity in Mumbai. Goa can be hot. Carry light layers. Check monsoon season (June-September) if traveling then.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🎁</span>
+                    <div class="tip-title">Shopping Smart</div>
+                </div>
+                <div class="tip-content">
+                    Bargaining expected at markets (start at 50% asking price). Fixed prices at malls. Best buys: textiles, handicrafts, spices, jewelry. Keep receipts for customs. Pack fragile items carefully.
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-header">
+                    <span class="tip-icon">🤝</span>
+                    <div class="tip-title">Cultural Respect</div>
+                </div>
+                <div class="tip-content">
+                    Indians love children! Expect attention. Use right hand for giving/receiving. Ask before photographing people. Learn basic Hindi phrases (Namaste, Dhanyavaad). Respect local customs.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="container">
+        <div class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know before you go</p>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do we need visas for India?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, Belgian citizens need an e-Visa for India. Apply online at least 4 days before travel (recommended 2 weeks ahead). Tourist e-Visa valid for 90 days, multiple entry. Cost: approximately $80 per person. Children need their own visa. Process takes 2-4 business days.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is India safe for families with young children?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Absolutely! India is very family-friendly and locals adore children. Millions of families visit annually. Main concerns are food/water safety (easily managed) and traffic (use reliable transport). Tourist areas in Mumbai and Goa are well-developed and safe. This itinerary focuses on family-friendly destinations with excellent infrastructure.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What vaccinations do we need?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Recommended vaccinations: Hepatitis A, Hepatitis B, Typhoid, Tetanus, and routine vaccinations (MMR, etc.). Consult your doctor 6-8 weeks before travel. Malaria prophylaxis not essential for Mumbai/Goa but discuss with doctor. Bring prescription medications and basic first aid supplies.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can kids handle the food in India?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes! Indian cuisine offers many mild options perfect for children. Request "no spicy" at restaurants. Options include: naan bread, rice dishes, butter chicken (mild), paneer dishes, dosas, idlis, pasta at hotels, and familiar fast food chains. Most hotels offer continental breakfast. Bring favorite snacks from home for picky eaters.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What's the best way to get around?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        For Mumbai: Use Uber/Ola apps for reliable rides. Metro system is modern and efficient. For day trips: hire a private driver (affordable and convenient with kids). Between cities: domestic flights save time (Mumbai-Goa-Aurangabad). In Goa: rent a scooter (for parents) or hire driver. Pre-booking is recommended for peace of mind.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What about internet and mobile connectivity?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        India has excellent mobile coverage. Buy a local SIM at the airport (Jio or Airtel recommended). You'll need: passport copy, passport photo, local address. Data is very affordable (20-30GB for ~€10). Most hotels offer WiFi. Download offline maps and entertainment for kids before data-heavy travel days.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is €11,000 enough for this trip?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, this budget is realistic and comfortable for 5 people for 21 days! It includes flights, accommodation, food, activities, and transport with €500 emergency buffer. You can even save money by: eating at local restaurants occasionally, booking accommodations with kitchenettes, using public transport sometimes. Budget allows for comfortable 3-4 star stays and regular activities.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What's the best time to visit?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Best period: November to February (winter season). Weather is pleasant (20-28°C), minimal rain, comfortable for sightseeing. December-January is peak tourist season (book early!). March-May is hot (35°C+). June-September is monsoon (heavy rain, not ideal). For your trip, aim for November-February for optimal family comfort.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do hotels have family rooms?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes! Many hotels offer family rooms or connecting rooms. Options include: family suites, apartments with multiple bedrooms, rooms with extra beds, or two adjoining rooms. Beach resorts in Goa often have family-friendly cottages. Always mention you have 3 children when booking. Many hotels provide cribs for the 4-year-old at no extra charge.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What should we avoid in India?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Avoid: tap water (drink only bottled), ice from unknown sources, raw salads initially, street food until acclimatized, showing excessive wealth, isolated areas at night, aggressive touts (politely decline), monsoon season travel. Do: stay hydrated, use sunscreen, follow hotel food recommendations, keep copies of documents, maintain hygiene, and enjoy the adventure!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>Ready for Your Adventure?</h3>
+            <p>This comprehensive guide ensures your family has the trip of a lifetime. Every detail has been carefully planned to balance adventure, culture, relaxation, and fun for all ages.</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span>📅</span>
+                    <span>21 Days of Wonder</span>
+                </div>
+                <div class="contact-item">
+                    <span>💰</span>
+                    <span>€11,000 Budget</span>
+                </div>
+                <div class="contact-item">
+                    <span>👨‍👩‍👧‍👦</span>
+                    <span>Family of 5</span>
+                </div>
+            </div>
+            <p style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
+                © 2024 Mumbai Family Adventure Guide | Created with ❤️ for your family journey
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop">↑</button>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Animate budget chart on scroll
+        const animateCharts = () => {
+            const charts = document.querySelectorAll('.chart-fill');
+            charts.forEach(chart => {
+                const rect = chart.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                    const width = chart.getAttribute('data-width');
+                    chart.style.width = width + '%';
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateCharts);
+        window.addEventListener('load', animateCharts);
+
+        // Itinerary filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const timelineItems = document.querySelectorAll('.timeline-item');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                const filter = button.getAttribute('data-filter');
+
+                timelineItems.forEach(item => {
+                    if (filter === 'all') {
+                        item.style.display = 'block';
+                    } else {
+                        const categories = item.getAttribute('data-categories');
+                        if (categories && categories.includes(filter)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+
+        // Packing list checkbox functionality
+        const packingItems = document.querySelectorAll('.packing-list li');
+
+        packingItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('checked');
+            });
+        });
+
+        // FAQ accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            const answer = item.querySelector('.faq-answer');
+
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+
+                // Close all FAQ items
+                faqItems.forEach(faq => {
+                    faq.classList.remove('active');
+                    faq.querySelector('.faq-answer').style.maxHeight = null;
+                });
+
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                }
+            });
+        });
+
+        // Budget Calculator
+        const calcDays = document.getElementById('calc-days');
+        const calcPeople = document.getElementById('calc-people');
+        const calcAccommodation = document.getElementById('calc-accommodation');
+        const calcResult = document.getElementById('calc-result');
+
+        function updateCalculator() {
+            const days = parseInt(calcDays.value) || 21;
+            const people = parseInt(calcPeople.value) || 5;
+            const accommodation = calcAccommodation.value;
+
+            // Base calculations
+            const flightCost = people * 700; // €700 per person
+
+            let accommodationRate;
+            switch(accommodation) {
+                case 'budget':
+                    accommodationRate = 80;
+                    break;
+                case 'luxury':
+                    accommodationRate = 250;
+                    break;
+                default:
+                    accommodationRate = 140;
+            }
+            const accommodationCost = (days - 1) * accommodationRate; // -1 for arrival day
+
+            const foodCost = days * 20 * people; // €20 per person per day
+            const activitiesCost = days * 20 * people; // €20 per person per day for activities/transport
+            const emergencyFund = 500;
+
+            const total = flightCost + accommodationCost + foodCost + activitiesCost + emergencyFund;
+
+            calcResult.textContent = '€' + total.toLocaleString();
+        }
+
+        calcDays.addEventListener('input', updateCalculator);
+        calcPeople.addEventListener('input', updateCalculator);
+        calcAccommodation.addEventListener('change', updateCalculator);
+
+        // Animation on scroll for timeline items
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        timelineItems.forEach(item => {
+            observer.observe(item);
+        });
+
+        // Mobile menu toggle (if needed)
+        const createMobileMenu = () => {
+            if (window.innerWidth <= 768) {
+                const nav = document.querySelector('nav');
+                const navLinks = document.querySelector('.nav-links');
+
+                if (!document.querySelector('.menu-toggle')) {
+                    const menuToggle = document.createElement('button');
+                    menuToggle.classList.add('menu-toggle');
+                    menuToggle.innerHTML = '☰';
+                    menuToggle.style.cssText = 'background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;';
+
+                    menuToggle.addEventListener('click', () => {
+                        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                        navLinks.style.flexDirection = 'column';
+                        navLinks.style.position = 'absolute';
+                        navLinks.style.top = '100%';
+                        navLinks.style.left = '0';
+                        navLinks.style.right = '0';
+                        navLinks.style.background = 'rgba(102, 126, 234, 0.95)';
+                        navLinks.style.padding = '1rem';
+                    });
+
+                    nav.insertBefore(menuToggle, navLinks);
+                }
+            }
+        };
+
+        window.addEventListener('load', createMobileMenu);
+        window.addEventListener('resize', createMobileMenu);
+
+        // Print functionality
+        window.addEventListener('beforeprint', () => {
+            // Show all timeline items before printing
+            timelineItems.forEach(item => {
+                item.style.display = 'block';
+            });
+        });
+
+        // Add subtle parallax effect to hero
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero');
+            const scrolled = window.pageYOffset;
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Add animation delay to timeline items
+        timelineItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Lazy load optimization
+        if ('IntersectionObserver' in window) {
+            const lazyElements = document.querySelectorAll('.timeline-content, .budget-card, .highlight-card');
+
+            const lazyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('loaded');
+                        lazyObserver.unobserve(entry.target);
+                    }
+                });
+            });
+
+            lazyElements.forEach(el => lazyObserver.observe(el));
+        }
+
+        // Add loading state
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            setTimeout(animateCharts, 500);
+        });
+
+        // Currency converter helper (optional enhancement)
+        const addCurrencyTooltips = () => {
+            const euroAmounts = document.querySelectorAll('.cost-amount, .budget-amount');
+            euroAmounts.forEach(amount => {
+                const euro = parseFloat(amount.textContent.replace('€', '').replace(',', ''));
+                if (!isNaN(euro)) {
+                    amount.title = `Approximately ${Math.round(euro * 90)} INR`;
+                }
+            });
+        };
+
+        window.addEventListener('load', addCurrencyTooltips);
+    </script>
+</body>
+</html>
