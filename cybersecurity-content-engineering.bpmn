@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             targetNamespace="http://bpmn.io/schema/bpmn"
+             id="cybersecurity-content-engineering"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+
+  <process id="CybersecurityContentEngineering" name="Cybersecurity Content Engineering Process" isExecutable="false">
+
+    <!-- Start Event -->
+    <startEvent id="StartEvent_1" name="Content Request Received">
+      <outgoing>Flow_1</outgoing>
+    </startEvent>
+
+    <!-- Task 1: Requirements Analysis -->
+    <userTask id="Task_RequirementsAnalysis" name="Analyze Content Requirements">
+      <incoming>Flow_1</incoming>
+      <outgoing>Flow_2</outgoing>
+    </userTask>
+
+    <!-- Task 2: Threat Intelligence Gathering -->
+    <task id="Task_ThreatIntelligence" name="Gather Threat Intelligence">
+      <incoming>Flow_2</incoming>
+      <outgoing>Flow_3</outgoing>
+    </task>
+
+    <!-- Task 3: Research & Data Collection -->
+    <task id="Task_Research" name="Research Security Topics">
+      <incoming>Flow_3</incoming>
+      <outgoing>Flow_4</outgoing>
+    </task>
+
+    <!-- Gateway: Content Type Decision -->
+    <exclusiveGateway id="Gateway_ContentType" name="Content Type?">
+      <incoming>Flow_4</incoming>
+      <outgoing>Flow_5a</outgoing>
+      <outgoing>Flow_5b</outgoing>
+      <outgoing>Flow_5c</outgoing>
+      <outgoing>Flow_5d</outgoing>
+    </exclusiveGateway>
+
+    <!-- Parallel Content Creation Tasks -->
+    <task id="Task_CreateTutorial" name="Create Security Tutorial">
+      <incoming>Flow_5a</incoming>
+      <outgoing>Flow_6a</outgoing>
+    </task>
+
+    <task id="Task_CreateThreatAnalysis" name="Create Threat Analysis">
+      <incoming>Flow_5b</incoming>
+      <outgoing>Flow_6b</outgoing>
+    </task>
+
+    <task id="Task_CreateBestPractices" name="Create Best Practices Guide">
+      <incoming>Flow_5c</incoming>
+      <outgoing>Flow_6c</outgoing>
+    </task>
+
+    <task id="Task_CreateIncidentResponse" name="Create Incident Response Plan">
+      <incoming>Flow_5d</incoming>
+      <outgoing>Flow_6d</outgoing>
+    </task>
+
+    <!-- Merge Gateway -->
+    <exclusiveGateway id="Gateway_Merge" name="Content Created">
+      <incoming>Flow_6a</incoming>
+      <incoming>Flow_6b</incoming>
+      <incoming>Flow_6c</incoming>
+      <incoming>Flow_6d</incoming>
+      <outgoing>Flow_7</outgoing>
+    </exclusiveGateway>
+
+    <!-- Task 4: Add Code Examples/Demonstrations -->
+    <task id="Task_CodeExamples" name="Develop Code Examples &amp; Demonstrations">
+      <incoming>Flow_7</incoming>
+      <outgoing>Flow_8</outgoing>
+    </task>
+
+    <!-- Task 5: Security Validation -->
+    <task id="Task_SecurityValidation" name="Validate Security Claims">
+      <incoming>Flow_8</incoming>
+      <incoming>Flow_14</incoming>
+      <outgoing>Flow_9</outgoing>
+    </task>
+
+    <!-- Gateway: Security Validation Check -->
+    <exclusiveGateway id="Gateway_SecurityCheck" name="Security Validated?">
+      <incoming>Flow_9</incoming>
+      <outgoing>Flow_10</outgoing>
+      <outgoing>Flow_13</outgoing>
+    </exclusiveGateway>
+
+    <!-- Task 6: Technical Review -->
+    <task id="Task_TechnicalReview" name="Technical Peer Review">
+      <incoming>Flow_10</incoming>
+      <outgoing>Flow_11</outgoing>
+    </task>
+
+    <!-- Gateway: Review Approval -->
+    <exclusiveGateway id="Gateway_ReviewApproval" name="Review Approved?">
+      <incoming>Flow_11</incoming>
+      <outgoing>Flow_12</outgoing>
+      <outgoing>Flow_14</outgoing>
+    </exclusiveGateway>
+
+    <!-- Task 7: Compliance Check -->
+    <task id="Task_ComplianceCheck" name="Compliance &amp; Legal Review">
+      <incoming>Flow_12</incoming>
+      <outgoing>Flow_15</outgoing>
+    </task>
+
+    <!-- Gateway: Compliance Check -->
+    <exclusiveGateway id="Gateway_ComplianceCheck" name="Compliant?">
+      <incoming>Flow_15</incoming>
+      <outgoing>Flow_16</outgoing>
+      <outgoing>Flow_17</outgoing>
+    </exclusiveGateway>
+
+    <!-- Task 8: Format and Style -->
+    <task id="Task_Formatting" name="Format &amp; Style Content">
+      <incoming>Flow_16</incoming>
+      <outgoing>Flow_18</outgoing>
+    </task>
+
+    <!-- Task 9: Create Visuals -->
+    <task id="Task_Visuals" name="Create Security Diagrams &amp; Visuals">
+      <incoming>Flow_18</incoming>
+      <outgoing>Flow_19</outgoing>
+    </task>
+
+    <!-- Task 10: Final Quality Check -->
+    <task id="Task_QualityCheck" name="Final Quality Assurance">
+      <incoming>Flow_19</incoming>
+      <outgoing>Flow_20</outgoing>
+    </task>
+
+    <!-- Gateway: Quality Approved -->
+    <exclusiveGateway id="Gateway_QualityCheck" name="Quality Approved?">
+      <incoming>Flow_20</incoming>
+      <outgoing>Flow_21</outgoing>
+      <outgoing>Flow_22</outgoing>
+    </exclusiveGateway>
+
+    <!-- Task 11: Publication -->
+    <task id="Task_Publication" name="Publish Content">
+      <incoming>Flow_21</incoming>
+      <outgoing>Flow_23</outgoing>
+    </task>
+
+    <!-- Task 12: Distribution -->
+    <task id="Task_Distribution" name="Distribute to Channels">
+      <incoming>Flow_23</incoming>
+      <outgoing>Flow_24</outgoing>
+    </task>
+
+    <!-- Task 13: Monitor Feedback -->
+    <task id="Task_Monitoring" name="Monitor Feedback &amp; Threats">
+      <incoming>Flow_24</incoming>
+      <outgoing>Flow_25</outgoing>
+    </task>
+
+    <!-- Gateway: Update Needed -->
+    <exclusiveGateway id="Gateway_UpdateNeeded" name="Update Required?">
+      <incoming>Flow_25</incoming>
+      <outgoing>Flow_26</outgoing>
+      <outgoing>Flow_27</outgoing>
+    </exclusiveGateway>
+
+    <!-- Task 14: Update Content -->
+    <task id="Task_UpdateContent" name="Update Content">
+      <incoming>Flow_26</incoming>
+      <outgoing>Flow_28</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent id="EndEvent_1" name="Content Lifecycle Complete">
+      <incoming>Flow_27</incoming>
+    </endEvent>
+
+    <!-- End Event for Rejected Content -->
+    <endEvent id="EndEvent_Rejected" name="Content Rejected">
+      <incoming>Flow_13</incoming>
+      <incoming>Flow_17</incoming>
+      <incoming>Flow_22</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_RequirementsAnalysis"/>
+    <sequenceFlow id="Flow_2" sourceRef="Task_RequirementsAnalysis" targetRef="Task_ThreatIntelligence"/>
+    <sequenceFlow id="Flow_3" sourceRef="Task_ThreatIntelligence" targetRef="Task_Research"/>
+    <sequenceFlow id="Flow_4" sourceRef="Task_Research" targetRef="Gateway_ContentType"/>
+
+    <!-- Content Type Branches -->
+    <sequenceFlow id="Flow_5a" name="Tutorial" sourceRef="Gateway_ContentType" targetRef="Task_CreateTutorial"/>
+    <sequenceFlow id="Flow_5b" name="Threat Analysis" sourceRef="Gateway_ContentType" targetRef="Task_CreateThreatAnalysis"/>
+    <sequenceFlow id="Flow_5c" name="Best Practices" sourceRef="Gateway_ContentType" targetRef="Task_CreateBestPractices"/>
+    <sequenceFlow id="Flow_5d" name="Incident Response" sourceRef="Gateway_ContentType" targetRef="Task_CreateIncidentResponse"/>
+
+    <!-- Merge Flows -->
+    <sequenceFlow id="Flow_6a" sourceRef="Task_CreateTutorial" targetRef="Gateway_Merge"/>
+    <sequenceFlow id="Flow_6b" sourceRef="Task_CreateThreatAnalysis" targetRef="Gateway_Merge"/>
+    <sequenceFlow id="Flow_6c" sourceRef="Task_CreateBestPractices" targetRef="Gateway_Merge"/>
+    <sequenceFlow id="Flow_6d" sourceRef="Task_CreateIncidentResponse" targetRef="Gateway_Merge"/>
+
+    <sequenceFlow id="Flow_7" sourceRef="Gateway_Merge" targetRef="Task_CodeExamples"/>
+    <sequenceFlow id="Flow_8" sourceRef="Task_CodeExamples" targetRef="Task_SecurityValidation"/>
+    <sequenceFlow id="Flow_9" sourceRef="Task_SecurityValidation" targetRef="Gateway_SecurityCheck"/>
+
+    <!-- Security Check Branches -->
+    <sequenceFlow id="Flow_10" name="Yes" sourceRef="Gateway_SecurityCheck" targetRef="Task_TechnicalReview"/>
+    <sequenceFlow id="Flow_13" name="No" sourceRef="Gateway_SecurityCheck" targetRef="EndEvent_Rejected"/>
+
+    <sequenceFlow id="Flow_11" sourceRef="Task_TechnicalReview" targetRef="Gateway_ReviewApproval"/>
+
+    <!-- Review Approval Branches -->
+    <sequenceFlow id="Flow_12" name="Yes" sourceRef="Gateway_ReviewApproval" targetRef="Task_ComplianceCheck"/>
+    <sequenceFlow id="Flow_14" name="No - Revise" sourceRef="Gateway_ReviewApproval" targetRef="Task_SecurityValidation"/>
+
+    <sequenceFlow id="Flow_15" sourceRef="Task_ComplianceCheck" targetRef="Gateway_ComplianceCheck"/>
+
+    <!-- Compliance Check Branches -->
+    <sequenceFlow id="Flow_16" name="Yes" sourceRef="Gateway_ComplianceCheck" targetRef="Task_Formatting"/>
+    <sequenceFlow id="Flow_17" name="No" sourceRef="Gateway_ComplianceCheck" targetRef="EndEvent_Rejected"/>
+
+    <sequenceFlow id="Flow_18" sourceRef="Task_Formatting" targetRef="Task_Visuals"/>
+    <sequenceFlow id="Flow_19" sourceRef="Task_Visuals" targetRef="Task_QualityCheck"/>
+    <sequenceFlow id="Flow_20" sourceRef="Task_QualityCheck" targetRef="Gateway_QualityCheck"/>
+
+    <!-- Quality Check Branches -->
+    <sequenceFlow id="Flow_21" name="Yes" sourceRef="Gateway_QualityCheck" targetRef="Task_Publication"/>
+    <sequenceFlow id="Flow_22" name="No" sourceRef="Gateway_QualityCheck" targetRef="EndEvent_Rejected"/>
+
+    <sequenceFlow id="Flow_23" sourceRef="Task_Publication" targetRef="Task_Distribution"/>
+    <sequenceFlow id="Flow_24" sourceRef="Task_Distribution" targetRef="Task_Monitoring"/>
+    <sequenceFlow id="Flow_25" sourceRef="Task_Monitoring" targetRef="Gateway_UpdateNeeded"/>
+
+    <!-- Update Decision Branches -->
+    <sequenceFlow id="Flow_26" name="Yes" sourceRef="Gateway_UpdateNeeded" targetRef="Task_UpdateContent"/>
+    <sequenceFlow id="Flow_27" name="No" sourceRef="Gateway_UpdateNeeded" targetRef="EndEvent_1"/>
+    <sequenceFlow id="Flow_28" sourceRef="Task_UpdateContent" targetRef="Task_ThreatIntelligence"/>
+
+  </process>
+
+  <!-- BPMN Diagram -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CybersecurityContentEngineering">
+
+      <!-- Start Event -->
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <omgdc:Bounds x="152" y="102" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="136" y="145" width="68" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- Task Shapes -->
+      <bpmndi:BPMNShape id="Task_RequirementsAnalysis_di" bpmnElement="Task_RequirementsAnalysis">
+        <omgdc:Bounds x="240" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_ThreatIntelligence_di" bpmnElement="Task_ThreatIntelligence">
+        <omgdc:Bounds x="400" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Research_di" bpmnElement="Task_Research">
+        <omgdc:Bounds x="560" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_ContentType_di" bpmnElement="Gateway_ContentType" isMarkerVisible="true">
+        <omgdc:Bounds x="720" y="95" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="707" y="65" width="76" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CreateTutorial_di" bpmnElement="Task_CreateTutorial">
+        <omgdc:Bounds x="840" y="20" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CreateThreatAnalysis_di" bpmnElement="Task_CreateThreatAnalysis">
+        <omgdc:Bounds x="840" y="120" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CreateBestPractices_di" bpmnElement="Task_CreateBestPractices">
+        <omgdc:Bounds x="840" y="220" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CreateIncidentResponse_di" bpmnElement="Task_CreateIncidentResponse">
+        <omgdc:Bounds x="840" y="320" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Merge_di" bpmnElement="Gateway_Merge" isMarkerVisible="true">
+        <omgdc:Bounds x="1020" y="95" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CodeExamples_di" bpmnElement="Task_CodeExamples">
+        <omgdc:Bounds x="1140" y="80" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_SecurityValidation_di" bpmnElement="Task_SecurityValidation">
+        <omgdc:Bounds x="240" y="220" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_SecurityCheck_di" bpmnElement="Gateway_SecurityCheck" isMarkerVisible="true">
+        <omgdc:Bounds x="400" y="235" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="394" y="205" width="62" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_TechnicalReview_di" bpmnElement="Task_TechnicalReview">
+        <omgdc:Bounds x="520" y="220" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_ReviewApproval_di" bpmnElement="Gateway_ReviewApproval" isMarkerVisible="true">
+        <omgdc:Bounds x="680" y="235" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="661" y="205" width="89" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_ComplianceCheck_di" bpmnElement="Task_ComplianceCheck">
+        <omgdc:Bounds x="800" y="220" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_ComplianceCheck_di" bpmnElement="Gateway_ComplianceCheck" isMarkerVisible="true">
+        <omgdc:Bounds x="960" y="235" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="958" y="205" width="55" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Formatting_di" bpmnElement="Task_Formatting">
+        <omgdc:Bounds x="1080" y="220" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Visuals_di" bpmnElement="Task_Visuals">
+        <omgdc:Bounds x="240" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_QualityCheck_di" bpmnElement="Task_QualityCheck">
+        <omgdc:Bounds x="400" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_QualityCheck_di" bpmnElement="Gateway_QualityCheck" isMarkerVisible="true">
+        <omgdc:Bounds x="560" y="375" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="559" y="345" width="52" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Publication_di" bpmnElement="Task_Publication">
+        <omgdc:Bounds x="680" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Distribution_di" bpmnElement="Task_Distribution">
+        <omgdc:Bounds x="840" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Monitoring_di" bpmnElement="Task_Monitoring">
+        <omgdc:Bounds x="1000" y="360" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_UpdateNeeded_di" bpmnElement="Gateway_UpdateNeeded" isMarkerVisible="true">
+        <omgdc:Bounds x="1160" y="375" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1160" y="345" width="50" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_UpdateContent_di" bpmnElement="Task_UpdateContent">
+        <omgdc:Bounds x="1135" y="480" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <omgdc:Bounds x="1282" y="382" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1271" y="425" width="58" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="EndEvent_Rejected_di" bpmnElement="EndEvent_Rejected">
+        <omgdc:Bounds x="407" y="502" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="383" y="545" width="85" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <omgdi:waypoint x="188" y="120"/>
+        <omgdi:waypoint x="240" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <omgdi:waypoint x="340" y="120"/>
+        <omgdi:waypoint x="400" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <omgdi:waypoint x="500" y="120"/>
+        <omgdi:waypoint x="560" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <omgdi:waypoint x="660" y="120"/>
+        <omgdi:waypoint x="720" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_5a_di" bpmnElement="Flow_5a">
+        <omgdi:waypoint x="745" y="95"/>
+        <omgdi:waypoint x="745" y="60"/>
+        <omgdi:waypoint x="840" y="60"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_5b_di" bpmnElement="Flow_5b">
+        <omgdi:waypoint x="745" y="120"/>
+        <omgdi:waypoint x="745" y="160"/>
+        <omgdi:waypoint x="840" y="160"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_5c_di" bpmnElement="Flow_5c">
+        <omgdi:waypoint x="745" y="145"/>
+        <omgdi:waypoint x="745" y="260"/>
+        <omgdi:waypoint x="840" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_5d_di" bpmnElement="Flow_5d">
+        <omgdi:waypoint x="770" y="120"/>
+        <omgdi:waypoint x="805" y="120"/>
+        <omgdi:waypoint x="805" y="360"/>
+        <omgdi:waypoint x="840" y="360"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_6a_di" bpmnElement="Flow_6a">
+        <omgdi:waypoint x="940" y="60"/>
+        <omgdi:waypoint x="1045" y="60"/>
+        <omgdi:waypoint x="1045" y="95"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_6b_di" bpmnElement="Flow_6b">
+        <omgdi:waypoint x="940" y="160"/>
+        <omgdi:waypoint x="1045" y="160"/>
+        <omgdi:waypoint x="1045" y="145"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_6c_di" bpmnElement="Flow_6c">
+        <omgdi:waypoint x="940" y="260"/>
+        <omgdi:waypoint x="1045" y="260"/>
+        <omgdi:waypoint x="1045" y="145"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_6d_di" bpmnElement="Flow_6d">
+        <omgdi:waypoint x="940" y="360"/>
+        <omgdi:waypoint x="1045" y="360"/>
+        <omgdi:waypoint x="1045" y="145"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <omgdi:waypoint x="1070" y="120"/>
+        <omgdi:waypoint x="1140" y="120"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <omgdi:waypoint x="1190" y="160"/>
+        <omgdi:waypoint x="1190" y="260"/>
+        <omgdi:waypoint x="340" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <omgdi:waypoint x="340" y="260"/>
+        <omgdi:waypoint x="400" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <omgdi:waypoint x="450" y="260"/>
+        <omgdi:waypoint x="520" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <omgdi:waypoint x="620" y="260"/>
+        <omgdi:waypoint x="680" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12">
+        <omgdi:waypoint x="730" y="260"/>
+        <omgdi:waypoint x="800" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13">
+        <omgdi:waypoint x="425" y="285"/>
+        <omgdi:waypoint x="425" y="502"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14">
+        <omgdi:waypoint x="705" y="285"/>
+        <omgdi:waypoint x="705" y="340"/>
+        <omgdi:waypoint x="290" y="340"/>
+        <omgdi:waypoint x="290" y="300"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_15_di" bpmnElement="Flow_15">
+        <omgdi:waypoint x="900" y="260"/>
+        <omgdi:waypoint x="960" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_16_di" bpmnElement="Flow_16">
+        <omgdi:waypoint x="1010" y="260"/>
+        <omgdi:waypoint x="1080" y="260"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_17_di" bpmnElement="Flow_17">
+        <omgdi:waypoint x="985" y="285"/>
+        <omgdi:waypoint x="985" y="520"/>
+        <omgdi:waypoint x="443" y="520"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_18_di" bpmnElement="Flow_18">
+        <omgdi:waypoint x="1130" y="300"/>
+        <omgdi:waypoint x="1130" y="400"/>
+        <omgdi:waypoint x="340" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19">
+        <omgdi:waypoint x="340" y="400"/>
+        <omgdi:waypoint x="400" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20">
+        <omgdi:waypoint x="500" y="400"/>
+        <omgdi:waypoint x="560" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21">
+        <omgdi:waypoint x="610" y="400"/>
+        <omgdi:waypoint x="680" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_22_di" bpmnElement="Flow_22">
+        <omgdi:waypoint x="585" y="425"/>
+        <omgdi:waypoint x="585" y="520"/>
+        <omgdi:waypoint x="443" y="520"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_23_di" bpmnElement="Flow_23">
+        <omgdi:waypoint x="780" y="400"/>
+        <omgdi:waypoint x="840" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24">
+        <omgdi:waypoint x="940" y="400"/>
+        <omgdi:waypoint x="1000" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_25_di" bpmnElement="Flow_25">
+        <omgdi:waypoint x="1100" y="400"/>
+        <omgdi:waypoint x="1160" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_26_di" bpmnElement="Flow_26">
+        <omgdi:waypoint x="1185" y="425"/>
+        <omgdi:waypoint x="1185" y="480"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_27_di" bpmnElement="Flow_27">
+        <omgdi:waypoint x="1210" y="400"/>
+        <omgdi:waypoint x="1282" y="400"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Flow_28_di" bpmnElement="Flow_28">
+        <omgdi:waypoint x="1135" y="520"/>
+        <omgdi:waypoint x="450" y="520"/>
+        <omgdi:waypoint x="450" y="160"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
