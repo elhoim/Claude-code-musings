@@ -1,0 +1,11 @@
+{
+  "jira_url": "https://your-domain.atlassian.net",
+  "jira_username": "your-email@example.com",
+  "jira_api_token": "your-api-token-here",
+  "db_path": "jira_tracker.db",
+  "num_processes": 4,
+  "batch_size": 100,
+  "window_width": 1200,
+  "window_height": 800,
+  "theme": "light"
+}
