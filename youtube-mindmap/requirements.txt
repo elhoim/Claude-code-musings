@@ -1,0 +1,15 @@
+# Flask Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# YouTube Transcript Extraction
+youtube-transcript-api==0.6.1
+
+# OpenAI for AI-powered concept extraction
+openai==1.6.1
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Additional utilities
+requests==2.31.0

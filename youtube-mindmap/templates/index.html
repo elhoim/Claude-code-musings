@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Mind Map Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsmind/0.8.5/style/jsmind.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fab fa-youtube"></i> YouTube Mind Map Generator</h1>
+                <p class="subtitle">Transform video content into interactive mind maps</p>
+            </div>
+        </header>
+
+        <!-- Input Section -->
+        <section class="input-section">
+            <div class="input-wrapper">
+                <div class="input-group">
+                    <i class="fas fa-link input-icon"></i>
+                    <input
+                        type="text"
+                        id="youtube-url"
+                        placeholder="Paste YouTube video URL here..."
+                        autocomplete="off"
+                    >
+                    <button id="generate-btn" class="btn btn-primary">
+                        <i class="fas fa-brain"></i>
+                        <span>Generate Mind Map</span>
+                    </button>
+                </div>
+                <div id="error-message" class="error-message" style="display: none;"></div>
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing video and extracting concepts...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mind Map Section -->
+        <section class="mindmap-section" id="mindmap-section" style="display: none;">
+            <div class="controls">
+                <div class="control-group">
+                    <button class="btn btn-secondary" id="zoom-in-btn">
+                        <i class="fas fa-search-plus"></i> Zoom In
+                    </button>
+                    <button class="btn btn-secondary" id="zoom-out-btn">
+                        <i class="fas fa-search-minus"></i> Zoom Out
+                    </button>
+                    <button class="btn btn-secondary" id="reset-view-btn">
+                        <i class="fas fa-compress-arrows-alt"></i> Reset View
+                    </button>
+                </div>
+
+                <div class="export-group">
+                    <button class="btn btn-export" id="export-png-btn">
+                        <i class="fas fa-image"></i> Export PNG
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-export" id="export-mindmap-btn">
+                            <i class="fas fa-download"></i> Export Mind Map <i class="fas fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-content" id="export-dropdown">
+                            <a href="#" data-format="freemind">
+                                <i class="fas fa-file-code"></i> FreeMind (.mm)
+                            </a>
+                            <a href="#" data-format="xmind">
+                                <i class="fas fa-file-alt"></i> XMind (JSON)
+                            </a>
+                            <a href="#" data-format="opml">
+                                <i class="fas fa-file-lines"></i> OPML
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mindmap-container">
+                <div id="jsmind_container"></div>
+            </div>
+        </section>
+
+        <!-- Instructions -->
+        <section class="instructions" id="instructions">
+            <div class="instruction-grid">
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-paste"></i>
+                    </div>
+                    <h3>1. Paste URL</h3>
+                    <p>Enter any YouTube video link in the input field above</p>
+                </div>
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3>2. Generate</h3>
+                    <p>Click generate to analyze the video and extract key concepts</p>
+                </div>
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h3>3. Edit & Customize</h3>
+                    <p>Click on nodes to edit, drag to rearrange, and customize your mind map</p>
+                </div>
+                <div class="instruction-card">
+                    <div class="instruction-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>4. Export</h3>
+                    <p>Download as PNG or in popular mind map formats</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with Flask, jsMind, and AI | <i class="fas fa-heart"></i> Open Source</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmind/0.8.5/jsmind.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
