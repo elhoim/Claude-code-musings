@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Netflix Clone{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="hero">
+        <h1>Welcome to Netflux</h1>
+        <p>Unlimited videos, playlists, and more.</p>
+    </section>
+
+    {% if playlists %}
+    <section class="content-section">
+        <h2>Playlists</h2>
+        <div class="playlists-grid">
+            {% for playlist in playlists %}
+            <a href="{{ url_for('playlist', playlist_id=playlist.id) }}" class="playlist-card">
+                <div class="playlist-info">
+                    <h3>{{ playlist.name }}</h3>
+                    {% if playlist.description %}
+                    <p>{{ playlist.description }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="content-section">
+        <h2>All Videos</h2>
+        {% if videos %}
+        <div class="videos-grid">
+            {% for video in videos %}
+            <div class="video-card">
+                <a href="{{ url_for('watch', youtube_id=video.youtube_id) }}">
+                    <img src="{{ video.thumbnail_url }}" alt="{{ video.title }}">
+                    <div class="video-info">
+                        <h3>{{ video.title }}</h3>
+                        {% if video.playlist_name %}
+                        <p class="playlist-tag">{{ video.playlist_name }}</p>
+                        {% endif %}
+                        {% if video.description %}
+                        <p class="video-description">{{ video.description }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-message">No videos available yet. Check back soon!</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

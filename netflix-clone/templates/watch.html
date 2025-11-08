@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ video.title }} - Netflix Clone{% endblock %}
+
+{% block content %}
+<div class="watch-container">
+    <div class="video-player">
+        <iframe
+            src="https://www.youtube.com/embed/{{ video.youtube_id }}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="video-details">
+        <h1>{{ video.title }}</h1>
+        {% if video.description %}
+        <p class="video-description">{{ video.description }}</p>
+        {% endif %}
+        <div class="video-actions">
+            <a href="{{ url_for('index') }}" class="btn-secondary">Back to Home</a>
+            <a href="https://www.youtube.com/watch?v={{ video.youtube_id }}" target="_blank" class="btn-secondary">Watch on YouTube</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

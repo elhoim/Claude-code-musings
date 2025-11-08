@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - Netflix Clone{% endblock %}
+
+{% block content %}
+<div class="container admin-container">
+    <h1>Admin Panel</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Videos</h3>
+            <p class="stat-number">{{ video_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Playlists</h3>
+            <p class="stat-number">{{ playlist_count }}</p>
+        </div>
+    </div>
+
+    <section class="admin-section">
+        <h2>Add YouTube Video</h2>
+        <form method="POST" action="{{ url_for('add_video') }}" class="admin-form">
+            <div class="form-group">
+                <label>YouTube URL:</label>
+                <input type="text" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." required>
+            </div>
+            <div class="form-group">
+                <label>Playlist (Optional):</label>
+                <select name="playlist_id">
+                    <option value="">-- No Playlist --</option>
+                    {% for playlist in playlists %}
+                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Add Video</button>
+        </form>
+    </section>
+
+    <section class="admin-section">
+        <h2>Add YouTube Playlist</h2>
+        <form method="POST" action="{{ url_for('add_playlist') }}" class="admin-form">
+            <div class="form-group">
+                <label>Playlist URL:</label>
+                <input type="text" name="playlist_url" placeholder="https://www.youtube.com/playlist?list=..." required>
+            </div>
+            <div class="form-group">
+                <label>Playlist Name:</label>
+                <input type="text" name="playlist_name" placeholder="My Awesome Playlist">
+            </div>
+            <button type="submit" class="btn-primary">Add Playlist</button>
+        </form>
+        <p class="help-text">Note: After creating a playlist, you'll need to add videos to it manually using the "Add Video" form above.</p>
+    </section>
+
+    <section class="admin-section">
+        <h2>Manage Playlists</h2>
+        {% if playlists %}
+        <div class="admin-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>YouTube ID</th>
+                        <th>Videos</th>
+                        <th>Added By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for playlist in playlists %}
+                    <tr>
+                        <td>{{ playlist.name }}</td>
+                        <td>{{ playlist.youtube_playlist_id }}</td>
+                        <td>{{ playlist.video_count }}</td>
+                        <td>{{ playlist.username }}</td>
+                        <td>
+                            <a href="{{ url_for('playlist', playlist_id=playlist.id) }}" class="btn-small">View</a>
+                            <form method="POST" action="{{ url_for('delete_playlist', playlist_id=playlist.id) }}" style="display: inline;">
+                                <button type="submit" class="btn-small btn-danger" onclick="return confirm('Delete this playlist?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-message">No playlists yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="admin-section">
+        <h2>Recent Videos</h2>
+        {% if recent_videos %}
+        <div class="admin-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thumbnail</th>
+                        <th>Title</th>
+                        <th>Playlist</th>
+                        <th>Added By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for video in recent_videos %}
+                    <tr>
+                        <td><img src="{{ video.thumbnail_url }}" alt="{{ video.title }}" style="width: 120px;"></td>
+                        <td>{{ video.title }}</td>
+                        <td>{{ video.playlist_name or 'None' }}</td>
+                        <td>{{ video.username }}</td>
+                        <td>
+                            <a href="{{ url_for('watch', youtube_id=video.youtube_id) }}" class="btn-small">Watch</a>
+                            <form method="POST" action="{{ url_for('delete_video', video_id=video.id) }}" style="display: inline;">
+                                <button type="submit" class="btn-small btn-danger" onclick="return confirm('Delete this video?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-message">No videos yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
