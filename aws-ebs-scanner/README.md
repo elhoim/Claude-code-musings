@@ -9,9 +9,14 @@ Automated bash script for scanning EBS snapshots using Nextron Thor forensic sca
 - **Volume Management**: Automatically creates volumes from snapshots, attaches, and mounts them
 - **Read-Only Mounting**: Mounts volumes in read-only mode under unique UUID directories in `/mnt/`
 - **Thor Integration**: Scans mounted volumes using Nextron Thor scanner in forensic lab mode
+- **Custom Thor Flags**: Pass additional Thor scanner flags for customized scanning behavior
 - **Automatic Cleanup**: Unmounts, detaches, and deletes temporary volumes (preserves original snapshots)
-- **Comprehensive Logging**: Detailed logging of all operations
-- **Error Handling**: Robust error handling with optional cleanup on failure
+- **Comprehensive Logging**: Detailed logging of all operations with debug mode support
+- **Robust Error Handling**:
+  - Automatic retry logic for AWS API calls with exponential backoff
+  - Emergency cleanup on script interruption (Ctrl+C) or errors
+  - Trap handlers ensure resources are always cleaned up
+  - Global state tracking for proper resource management
 
 ## Prerequisites
 
@@ -97,9 +102,11 @@ sudo ./ebs-snapshot-scanner.sh -r us-east-1 -d 7 -n
 | `-t, --thor-path <path>` | Path to Thor binary | No (default: `/opt/nextron/thor/thor64`) |
 | `-o, --output-dir <path>` | Thor scan output directory | No (default: `/var/log/thor-scans`) |
 | `-s, --snapshot-ids <ids>` | Comma-separated snapshot IDs to scan | No |
+| `-f, --thor-flags <flags>` | Additional flags to pass to Thor scanner (quoted string) | No |
 | `-n, --dry-run` | Show what would be done without executing | No |
 | `-c, --max-concurrent <num>` | Maximum concurrent scans | No (default: 1) |
 | `--no-cleanup-on-error` | Don't cleanup resources if scan fails | No |
+| `--debug` | Enable debug logging | No |
 | `-h, --help` | Show help message | No |
 
 ## How It Works
@@ -151,6 +158,29 @@ The script's operational log is saved to: `/var/log/ebs-scanner.log`
 }
 ```
 
+## Error Handling & Recovery
+
+The script includes comprehensive error handling:
+
+### Automatic Retry Logic
+- AWS API calls automatically retry up to 3 times with exponential backoff (5s, 10s, 20s)
+- Handles transient AWS service failures gracefully
+
+### Emergency Cleanup
+- Trap handlers catch script interruptions (Ctrl+C, errors, unexpected exits)
+- Automatically cleans up any allocated resources:
+  - Force unmounts volumes (using `-f` or `-l` flags if needed)
+  - Detaches volumes from the instance with `--force` flag
+  - Deletes temporary volumes to prevent AWS charges
+- Global state tracking ensures cleanup happens even on unexpected failures
+
+### Safe Exit
+The script will properly clean up resources in these scenarios:
+- User interruption (Ctrl+C)
+- Script errors or crashes
+- AWS API failures
+- Mount or Thor scanner failures
+
 ## Security Considerations
 
 - Volumes are mounted with `ro,noexec,nodev,nosuid` flags for security
@@ -158,6 +188,7 @@ The script's operational log is saved to: `/var/log/ebs-scanner.log`
 - Temporary volumes are automatically cleaned up after scanning
 - Original snapshots are never modified or deleted
 - All operations are logged for audit purposes
+- Emergency cleanup prevents resource leaks on failure
 
 ## Troubleshooting
 
@@ -219,6 +250,21 @@ sudo ./ebs-snapshot-scanner.sh -r ap-southeast-1 -d 30 -n
 
 # Then run the actual scan
 sudo ./ebs-snapshot-scanner.sh -r ap-southeast-1 -d 30
+```
+
+### Example 4: Custom Thor Scanning Flags
+```bash
+# Quick scan with custom flags
+sudo ./ebs-snapshot-scanner.sh -r us-east-1 -f "--quick --norescontrol"
+
+# Deep scan with multiple custom flags
+sudo ./ebs-snapshot-scanner.sh -r eu-west-1 -d 7 -f "--intense --lookback --norescontrol"
+```
+
+### Example 5: Debug Mode for Troubleshooting
+```bash
+# Enable debug logging to troubleshoot issues
+sudo ./ebs-snapshot-scanner.sh -r us-east-1 -d 30 --debug
 ```
 
 ## License

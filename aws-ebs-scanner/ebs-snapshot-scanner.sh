@@ -26,12 +26,21 @@ set -euo pipefail
 REGION=""
 DAYS_FILTER=""
 THOR_PATH="/opt/nextron/thor/thor64"
+THOR_FLAGS=""
 OUTPUT_DIR="/var/log/thor-scans"
 MOUNT_BASE="/mnt"
 LOG_FILE="/var/log/ebs-scanner.log"
 DRY_RUN=false
 MAX_CONCURRENT=1
 CLEANUP_ON_ERROR=true
+AWS_RETRY_ATTEMPTS=3
+AWS_RETRY_DELAY=5
+
+# Global state for error handling and cleanup
+declare -g CURRENT_VOLUME_ID=""
+declare -g CURRENT_DEVICE=""
+declare -g CURRENT_MOUNT_POINT=""
+declare -g CLEANUP_IN_PROGRESS=false
 
 # Colors for output
 RED='\033[0;31m'
@@ -45,7 +54,7 @@ log() {
 }
 
 log_error() {
-    echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $*${NC}" | tee -a "$LOG_FILE"
+    echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $*${NC}" | tee -a "$LOG_FILE" >&2
 }
 
 log_success() {
@@ -54,6 +63,121 @@ log_success() {
 
 log_warning() {
     echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: $*${NC}" | tee -a "$LOG_FILE"
+}
+
+log_debug() {
+    if [[ "${DEBUG:-false}" == "true" ]]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] DEBUG: $*" | tee -a "$LOG_FILE"
+    fi
+}
+
+# Error handler for trap
+error_handler() {
+    local exit_code=$?
+    local line_number=$1
+
+    log_error "Script failed at line $line_number with exit code $exit_code"
+
+    # Perform emergency cleanup if resources are allocated
+    if [[ "$CLEANUP_IN_PROGRESS" == "false" ]] && [[ -n "$CURRENT_VOLUME_ID" ]]; then
+        log_warning "Performing emergency cleanup due to error..."
+        CLEANUP_IN_PROGRESS=true
+        emergency_cleanup
+    fi
+
+    exit $exit_code
+}
+
+# Interrupt handler for trap
+interrupt_handler() {
+    log_warning "Script interrupted by user (Ctrl+C)"
+
+    # Perform emergency cleanup if resources are allocated
+    if [[ "$CLEANUP_IN_PROGRESS" == "false" ]] && [[ -n "$CURRENT_VOLUME_ID" ]]; then
+        log_warning "Performing emergency cleanup due to interrupt..."
+        CLEANUP_IN_PROGRESS=true
+        emergency_cleanup
+    fi
+
+    exit 130
+}
+
+# Exit handler for trap
+exit_handler() {
+    local exit_code=$?
+
+    if [[ $exit_code -ne 0 ]] && [[ "$CLEANUP_IN_PROGRESS" == "false" ]] && [[ -n "$CURRENT_VOLUME_ID" ]]; then
+        log_warning "Performing cleanup on exit..."
+        CLEANUP_IN_PROGRESS=true
+        emergency_cleanup
+    fi
+}
+
+# Emergency cleanup function
+emergency_cleanup() {
+    log "Starting emergency cleanup..."
+
+    # Turn off exit on error temporarily for cleanup
+    set +e
+
+    if [[ -n "$CURRENT_MOUNT_POINT" ]] && mountpoint -q "$CURRENT_MOUNT_POINT" 2>/dev/null; then
+        log "Emergency unmounting: $CURRENT_MOUNT_POINT"
+        umount -f "$CURRENT_MOUNT_POINT" 2>/dev/null || umount -l "$CURRENT_MOUNT_POINT" 2>/dev/null
+        rmdir "$CURRENT_MOUNT_POINT" 2>/dev/null
+    fi
+
+    if [[ -n "$CURRENT_VOLUME_ID" ]]; then
+        log "Emergency detaching volume: $CURRENT_VOLUME_ID"
+        aws ec2 detach-volume --region "$REGION" --volume-id "$CURRENT_VOLUME_ID" --force 2>/dev/null
+        sleep 5
+
+        log "Emergency deleting volume: $CURRENT_VOLUME_ID"
+        aws ec2 delete-volume --region "$REGION" --volume-id "$CURRENT_VOLUME_ID" 2>/dev/null
+    fi
+
+    # Reset state
+    CURRENT_VOLUME_ID=""
+    CURRENT_DEVICE=""
+    CURRENT_MOUNT_POINT=""
+
+    set -e
+    log "Emergency cleanup completed"
+}
+
+# Set up trap handlers
+trap 'error_handler $LINENO' ERR
+trap 'interrupt_handler' INT TERM
+trap 'exit_handler' EXIT
+
+# AWS retry wrapper function
+aws_retry() {
+    local attempt=1
+    local max_attempts=$AWS_RETRY_ATTEMPTS
+    local delay=$AWS_RETRY_DELAY
+    local exit_code
+
+    while [[ $attempt -le $max_attempts ]]; do
+        log_debug "AWS API call attempt $attempt of $max_attempts: $*"
+
+        if "$@"; then
+            return 0
+        else
+            exit_code=$?
+
+            if [[ $attempt -lt $max_attempts ]]; then
+                log_warning "AWS API call failed (attempt $attempt/$max_attempts), retrying in ${delay}s..."
+                sleep $delay
+                delay=$((delay * 2))  # Exponential backoff
+            else
+                log_error "AWS API call failed after $max_attempts attempts"
+                return $exit_code
+            fi
+        fi
+
+        ((attempt++))
+    done
+
+    return $exit_code
 }
 
 # Usage information
@@ -69,9 +193,11 @@ Optional:
   -t, --thor-path <path>         Path to Thor binary (default: $THOR_PATH)
   -o, --output-dir <path>        Thor scan output directory (default: $OUTPUT_DIR)
   -s, --snapshot-ids <ids>       Comma-separated list of specific snapshot IDs to scan
+  -f, --thor-flags <flags>       Additional flags to pass to Thor scanner (quoted string)
   -n, --dry-run                  Show what would be done without executing
   -c, --max-concurrent <num>     Maximum concurrent scans (default: 1)
   --no-cleanup-on-error          Don't cleanup resources if scan fails
+  --debug                        Enable debug logging
   -h, --help                     Show this help message
 
 Examples:
@@ -83,6 +209,9 @@ Examples:
 
   # Scan specific snapshots
   $0 -r us-east-1 -s snap-12345678,snap-87654321
+
+  # Scan with custom Thor flags
+  $0 -r us-east-1 -f "--quick --norescontrol"
 
   # Dry run to see what would be scanned
   $0 -r us-east-1 -d 7 -n
@@ -115,6 +244,10 @@ parse_args() {
                 SNAPSHOT_IDS="$2"
                 shift 2
                 ;;
+            -f|--thor-flags)
+                THOR_FLAGS="$2"
+                shift 2
+                ;;
             -n|--dry-run)
                 DRY_RUN=true
                 shift
@@ -125,6 +258,10 @@ parse_args() {
                 ;;
             --no-cleanup-on-error)
                 CLEANUP_ON_ERROR=false
+                shift
+                ;;
+            --debug)
+                DEBUG=true
                 shift
                 ;;
             -h|--help)
@@ -263,17 +400,21 @@ create_volume_from_snapshot() {
         return 0
     fi
 
-    local volume_id=$(aws ec2 create-volume \
+    local volume_id
+    if ! volume_id=$(aws_retry aws ec2 create-volume \
         --region "$REGION" \
         --availability-zone "$AVAILABILITY_ZONE" \
         --snapshot-id "$snapshot_id" \
         --volume-type gp3 \
         --tag-specifications "ResourceType=volume,Tags=[{Key=Name,Value=thor-scan-temp},{Key=SnapshotId,Value=$snapshot_id},{Key=CreatedBy,Value=ebs-scanner}]" \
         --query 'VolumeId' \
-        --output text)
+        --output text); then
+        log_error "Failed to create volume from snapshot: $snapshot_id after retries"
+        return 1
+    fi
 
     if [[ -z "$volume_id" ]]; then
-        log_error "Failed to create volume from snapshot: $snapshot_id"
+        log_error "Created volume ID is empty for snapshot: $snapshot_id"
         return 1
     fi
 
@@ -281,7 +422,10 @@ create_volume_from_snapshot() {
 
     # Wait for volume to be available
     log "Waiting for volume to become available..."
-    aws ec2 wait volume-available --region "$REGION" --volume-ids "$volume_id"
+    if ! aws_retry aws ec2 wait volume-available --region "$REGION" --volume-ids "$volume_id"; then
+        log_error "Volume $volume_id did not become available in time"
+        return 1
+    fi
 
     log_success "Volume $volume_id is ready"
     echo "$volume_id"
@@ -299,15 +443,21 @@ attach_volume() {
         return 0
     fi
 
-    aws ec2 attach-volume \
+    if ! aws_retry aws ec2 attach-volume \
         --region "$REGION" \
         --volume-id "$volume_id" \
         --instance-id "$INSTANCE_ID" \
-        --device "$device" > /dev/null
+        --device "$device" > /dev/null; then
+        log_error "Failed to attach volume $volume_id after retries"
+        return 1
+    fi
 
     # Wait for volume to be attached
     log "Waiting for volume to attach..."
-    aws ec2 wait volume-in-use --region "$REGION" --volume-ids "$volume_id"
+    if ! aws_retry aws ec2 wait volume-in-use --region "$REGION" --volume-ids "$volume_id"; then
+        log_error "Volume $volume_id did not attach in time"
+        return 1
+    fi
 
     # Wait for device to appear in the system
     local max_wait=30
@@ -387,7 +537,7 @@ scan_with_thor() {
     # Thor scanner command with forensic lab options
     # Using --lab mode for forensic analysis of mounted volumes
     # Adjust options based on your Thor license and requirements
-    local thor_cmd="$THOR_PATH \
+    local thor_base_cmd="$THOR_PATH \
         --lab \
         -p \"$mount_point\" \
         --htmlfile \"$output_file\" \
@@ -396,22 +546,47 @@ scan_with_thor() {
         --intense \
         --fsonly"
 
-    log "Executing: $thor_cmd"
+    # Append custom Thor flags if provided
+    local thor_cmd="$thor_base_cmd"
+    if [[ -n "$THOR_FLAGS" ]]; then
+        log "Appending custom Thor flags: $THOR_FLAGS"
+        thor_cmd="$thor_cmd $THOR_FLAGS"
+    fi
 
-    # Run Thor scanner
+    log "Executing Thor scan command"
+    log_debug "Thor command: $thor_cmd"
+
+    # Run Thor scanner with error handling
+    local exit_code=0
     if eval "$thor_cmd"; then
         log_success "Thor scan completed successfully"
-        log "Scan report: $output_file"
-        log "Scan log: $log_file"
-        return 0
     else
-        local exit_code=$?
-        log_warning "Thor scan completed with exit code: $exit_code"
-        log "This may indicate findings were detected (consult Thor documentation)"
-        log "Scan report: $output_file"
-        log "Scan log: $log_file"
-        return 0  # Don't fail on Thor findings
+        exit_code=$?
+        if [[ $exit_code -eq 1 ]]; then
+            log_warning "Thor scan completed with findings (exit code: $exit_code)"
+            log "This typically indicates threats or suspicious items were detected"
+        elif [[ $exit_code -eq 2 ]]; then
+            log_warning "Thor scan completed with errors (exit code: $exit_code)"
+        else
+            log_warning "Thor scan completed with exit code: $exit_code"
+        fi
+        log "Consult Thor documentation for exit code meanings"
     fi
+
+    # Check if report files were created
+    if [[ -f "$output_file" ]]; then
+        log "Scan HTML report: $output_file"
+    else
+        log_warning "HTML report was not created: $output_file"
+    fi
+
+    if [[ -f "$log_file" ]]; then
+        log "Scan log file: $log_file"
+    else
+        log_warning "Log file was not created: $log_file"
+    fi
+
+    return 0  # Don't fail the script on Thor findings
 }
 
 # Cleanup resources
@@ -439,18 +614,28 @@ cleanup_volume() {
     fi
 
     # Detach volume
-    if aws ec2 describe-volumes --region "$REGION" --volume-ids "$volume_id" --query 'Volumes[0].State' --output text 2>/dev/null | grep -q "in-use"; then
-        log "Detaching volume $volume_id"
-        aws ec2 detach-volume --region "$REGION" --volume-id "$volume_id" > /dev/null || log_warning "Failed to detach volume"
+    local volume_state
+    volume_state=$(aws ec2 describe-volumes --region "$REGION" --volume-ids "$volume_id" --query 'Volumes[0].State' --output text 2>/dev/null || echo "unknown")
 
-        # Wait for volume to detach
-        log "Waiting for volume to detach..."
-        aws ec2 wait volume-available --region "$REGION" --volume-ids "$volume_id" 2>/dev/null || true
+    if [[ "$volume_state" == "in-use" ]]; then
+        log "Detaching volume $volume_id"
+        if ! aws_retry aws ec2 detach-volume --region "$REGION" --volume-id "$volume_id" > /dev/null; then
+            log_warning "Failed to detach volume after retries"
+        else
+            # Wait for volume to detach
+            log "Waiting for volume to detach..."
+            aws_retry aws ec2 wait volume-available --region "$REGION" --volume-ids "$volume_id" 2>/dev/null || log_warning "Volume did not detach in expected time"
+        fi
     fi
 
     # Delete volume
     log "Deleting volume $volume_id"
-    aws ec2 delete-volume --region "$REGION" --volume-id "$volume_id" || log_warning "Failed to delete volume"
+    if ! aws_retry aws ec2 delete-volume --region "$REGION" --volume-id "$volume_id"; then
+        log_error "Failed to delete volume $volume_id after retries"
+        log_error "Please manually delete volume $volume_id to avoid charges"
+    else
+        log_success "Volume $volume_id deleted successfully"
+    fi
 
     log_success "Cleanup completed for volume $volume_id"
 }
@@ -475,25 +660,37 @@ process_snapshot() {
         return 1
     fi
 
+    # Update global state for error handling
+    CURRENT_VOLUME_ID="$volume_id"
+
     # Get available device
     device=$(get_available_device)
     if [[ $? -ne 0 ]] || [[ -z "$device" ]]; then
         log_error "No available device for snapshot: $snapshot_id"
         cleanup_volume "$volume_id" "" ""
+        CURRENT_VOLUME_ID=""
         return 1
     fi
+
+    CURRENT_DEVICE="$device"
 
     # Attach volume
     if ! attach_volume "$volume_id" "$device"; then
         log_error "Failed to attach volume: $volume_id"
         cleanup_volume "$volume_id" "" ""
+        CURRENT_VOLUME_ID=""
+        CURRENT_DEVICE=""
         return 1
     fi
 
     # Mount volume
+    CURRENT_MOUNT_POINT="$mount_point"
     if ! mount_volume "$device" "$mount_point"; then
         log_error "Failed to mount volume: $volume_id"
         cleanup_volume "$volume_id" "$device" "$mount_point"
+        CURRENT_VOLUME_ID=""
+        CURRENT_DEVICE=""
+        CURRENT_MOUNT_POINT=""
         return 1
     fi
 
@@ -505,7 +702,14 @@ process_snapshot() {
     fi
 
     # Cleanup
+    CLEANUP_IN_PROGRESS=true
     cleanup_volume "$volume_id" "$device" "$mount_point"
+
+    # Reset global state after cleanup
+    CURRENT_VOLUME_ID=""
+    CURRENT_DEVICE=""
+    CURRENT_MOUNT_POINT=""
+    CLEANUP_IN_PROGRESS=false
 
     if [[ $scan_result -eq 0 ]]; then
         log_success "Snapshot $snapshot_id processed successfully"
