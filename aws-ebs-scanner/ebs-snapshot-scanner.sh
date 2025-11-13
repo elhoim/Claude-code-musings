@@ -281,51 +281,261 @@ parse_args() {
     fi
 }
 
+# Check AWS CLI installation and version
+check_aws_cli() {
+    log "Checking AWS CLI..."
+
+    # Check if AWS CLI is installed
+    if ! command -v aws &> /dev/null; then
+        log_error "AWS CLI is not installed"
+        log_error "Please install AWS CLI: https://aws.amazon.com/cli/"
+        return 1
+    fi
+
+    # Get AWS CLI version
+    local aws_version=$(aws --version 2>&1 | cut -d ' ' -f1 | cut -d '/' -f2)
+    log "AWS CLI version: $aws_version"
+
+    # Check if version is at least 1.x or 2.x
+    local major_version=$(echo "$aws_version" | cut -d '.' -f1)
+    if [[ "$major_version" -lt 1 ]]; then
+        log_warning "AWS CLI version is very old. Please consider upgrading."
+    fi
+
+    log_success "AWS CLI is installed"
+    return 0
+}
+
+# Check IAM permissions
+check_iam_permissions() {
+    log "Checking IAM permissions..."
+
+    local permission_errors=0
+
+    # Get caller identity for logging
+    local caller_identity=$(aws sts get-caller-identity --region "$REGION" --output json 2>/dev/null)
+    if [[ $? -ne 0 ]]; then
+        log_error "Cannot retrieve caller identity. Check AWS credentials."
+        return 1
+    fi
+
+    local caller_arn=$(echo "$caller_identity" | grep -o '"Arn": "[^"]*"' | cut -d '"' -f4)
+    local account_id=$(echo "$caller_identity" | grep -o '"Account": "[^"]*"' | cut -d '"' -f4)
+    log "AWS Account: $account_id"
+    log "IAM Identity: $caller_arn"
+
+    # Test ec2:DescribeSnapshots
+    log_debug "Testing ec2:DescribeSnapshots permission..."
+    if aws ec2 describe-snapshots --region "$REGION" --owner-ids self --max-results 1 --output json &>/dev/null; then
+        log_success "✓ ec2:DescribeSnapshots"
+    else
+        log_error "✗ ec2:DescribeSnapshots - Permission denied"
+        ((permission_errors++))
+    fi
+
+    # Test ec2:DescribeVolumes
+    log_debug "Testing ec2:DescribeVolumes permission..."
+    if aws ec2 describe-volumes --region "$REGION" --max-results 1 --output json &>/dev/null; then
+        log_success "✓ ec2:DescribeVolumes"
+    else
+        log_error "✗ ec2:DescribeVolumes - Permission denied"
+        ((permission_errors++))
+    fi
+
+    # Test ec2:CreateVolume (dry-run)
+    log_debug "Testing ec2:CreateVolume permission..."
+    local test_result=$(aws ec2 create-volume \
+        --region "$REGION" \
+        --availability-zone "${AVAILABILITY_ZONE}" \
+        --size 1 \
+        --dry-run 2>&1)
+
+    if echo "$test_result" | grep -q "DryRunOperation"; then
+        log_success "✓ ec2:CreateVolume"
+    elif echo "$test_result" | grep -q "UnauthorizedOperation"; then
+        log_error "✗ ec2:CreateVolume - Permission denied"
+        ((permission_errors++))
+    else
+        log_warning "⚠ ec2:CreateVolume - Unable to verify (may work in practice)"
+    fi
+
+    # Test ec2:AttachVolume (dry-run)
+    log_debug "Testing ec2:AttachVolume permission..."
+    test_result=$(aws ec2 attach-volume \
+        --region "$REGION" \
+        --volume-id vol-00000000000000000 \
+        --instance-id "${INSTANCE_ID}" \
+        --device /dev/sdx \
+        --dry-run 2>&1)
+
+    if echo "$test_result" | grep -q "DryRunOperation"; then
+        log_success "✓ ec2:AttachVolume"
+    elif echo "$test_result" | grep -q "UnauthorizedOperation"; then
+        log_error "✗ ec2:AttachVolume - Permission denied"
+        ((permission_errors++))
+    else
+        log_warning "⚠ ec2:AttachVolume - Unable to verify (may work in practice)"
+    fi
+
+    # Test ec2:DetachVolume (dry-run)
+    log_debug "Testing ec2:DetachVolume permission..."
+    test_result=$(aws ec2 detach-volume \
+        --region "$REGION" \
+        --volume-id vol-00000000000000000 \
+        --dry-run 2>&1)
+
+    if echo "$test_result" | grep -q "DryRunOperation"; then
+        log_success "✓ ec2:DetachVolume"
+    elif echo "$test_result" | grep -q "UnauthorizedOperation"; then
+        log_error "✗ ec2:DetachVolume - Permission denied"
+        ((permission_errors++))
+    else
+        log_warning "⚠ ec2:DetachVolume - Unable to verify (may work in practice)"
+    fi
+
+    # Test ec2:DeleteVolume (dry-run)
+    log_debug "Testing ec2:DeleteVolume permission..."
+    test_result=$(aws ec2 delete-volume \
+        --region "$REGION" \
+        --volume-id vol-00000000000000000 \
+        --dry-run 2>&1)
+
+    if echo "$test_result" | grep -q "DryRunOperation"; then
+        log_success "✓ ec2:DeleteVolume"
+    elif echo "$test_result" | grep -q "UnauthorizedOperation"; then
+        log_error "✗ ec2:DeleteVolume - Permission denied"
+        ((permission_errors++))
+    else
+        log_warning "⚠ ec2:DeleteVolume - Unable to verify (may work in practice)"
+    fi
+
+    # Test ec2:CreateTags (dry-run)
+    log_debug "Testing ec2:CreateTags permission..."
+    test_result=$(aws ec2 create-tags \
+        --region "$REGION" \
+        --resources vol-00000000000000000 \
+        --tags Key=Test,Value=Test \
+        --dry-run 2>&1)
+
+    if echo "$test_result" | grep -q "DryRunOperation"; then
+        log_success "✓ ec2:CreateTags"
+    elif echo "$test_result" | grep -q "UnauthorizedOperation"; then
+        log_error "✗ ec2:CreateTags - Permission denied"
+        ((permission_errors++))
+    else
+        log_warning "⚠ ec2:CreateTags - Unable to verify (may work in practice)"
+    fi
+
+    if [[ $permission_errors -gt 0 ]]; then
+        log_error "IAM permission check failed: $permission_errors permission(s) missing"
+        log_error "Please ensure the IAM role/user has the required EC2 permissions"
+        log_error "See README.md for the required IAM policy"
+        return 1
+    fi
+
+    log_success "All required IAM permissions verified"
+    return 0
+}
+
 # Check prerequisites
 check_prerequisites() {
-    log "Checking prerequisites..."
+    log "=========================================="
+    log "Prerequisites Check"
+    log "=========================================="
 
     # Check if running as root
     if [[ $EUID -ne 0 ]] && [[ "$DRY_RUN" == false ]]; then
         log_error "This script must be run as root for mounting operations"
+        log_error "Please run with: sudo $0"
         exit 1
     fi
 
     # Check AWS CLI
-    if ! command -v aws &> /dev/null; then
-        log_error "AWS CLI is not installed"
-        exit 1
-    fi
-
-    # Check Thor scanner
-    if [[ ! -f "$THOR_PATH" ]] && [[ "$DRY_RUN" == false ]]; then
-        log_error "Thor scanner not found at: $THOR_PATH"
-        log_error "Please install Thor or specify correct path with -t option"
+    if ! check_aws_cli; then
         exit 1
     fi
 
     # Verify AWS credentials
+    log "Verifying AWS credentials..."
     if ! aws sts get-caller-identity --region "$REGION" &> /dev/null; then
         log_error "AWS credentials not configured or invalid"
+        log_error "Please configure AWS credentials using 'aws configure' or IAM role"
         exit 1
     fi
+    log_success "AWS credentials valid"
 
     # Get instance ID and availability zone
-    INSTANCE_ID=$(ec2-metadata --instance-id 2>/dev/null | cut -d ' ' -f 2 || curl -s http://169.254.169.254/latest/meta-data/instance-id)
-    AVAILABILITY_ZONE=$(ec2-metadata --availability-zone 2>/dev/null | cut -d ' ' -f 2 || curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+    log "Detecting EC2 instance metadata..."
+    INSTANCE_ID=$(ec2-metadata --instance-id 2>/dev/null | cut -d ' ' -f 2 || curl -s http://169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+    AVAILABILITY_ZONE=$(ec2-metadata --availability-zone 2>/dev/null | cut -d ' ' -f 2 || curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone 2>/dev/null)
 
     if [[ -z "$INSTANCE_ID" ]]; then
-        log_error "Could not determine EC2 instance ID. Are you running on an EC2 instance?"
+        log_error "Could not determine EC2 instance ID"
+        log_error "This script must run on an EC2 instance in the target region"
+        log_error "Ensure instance metadata service is accessible"
         exit 1
     fi
 
     log "Instance ID: $INSTANCE_ID"
     log "Availability Zone: $AVAILABILITY_ZONE"
 
-    # Create output directory
-    mkdir -p "$OUTPUT_DIR"
+    # Check IAM permissions
+    if ! check_iam_permissions; then
+        exit 1
+    fi
 
-    log_success "All prerequisites met"
+    # Check Thor scanner
+    log "Checking Thor scanner..."
+    if [[ ! -f "$THOR_PATH" ]] && [[ "$DRY_RUN" == false ]]; then
+        log_error "Thor scanner not found at: $THOR_PATH"
+        log_error "Please install Thor or specify correct path with -t option"
+        log_error "Download from: https://www.nextron-systems.com/thor/"
+        exit 1
+    fi
+
+    if [[ -f "$THOR_PATH" ]]; then
+        # Check if Thor is executable
+        if [[ ! -x "$THOR_PATH" ]]; then
+            log_error "Thor scanner at $THOR_PATH is not executable"
+            log_error "Run: chmod +x $THOR_PATH"
+            exit 1
+        fi
+
+        # Try to get Thor version
+        local thor_version=$("$THOR_PATH" --version 2>/dev/null | head -n1 || echo "unknown")
+        log "Thor scanner: $thor_version"
+        log_success "Thor scanner is ready"
+    fi
+
+    # Check required system utilities
+    log "Checking system utilities..."
+    local missing_utils=()
+
+    for util in mountpoint blkid uuidgen; do
+        if ! command -v "$util" &> /dev/null; then
+            missing_utils+=("$util")
+        fi
+    done
+
+    if [[ ${#missing_utils[@]} -gt 0 ]]; then
+        log_error "Missing required system utilities: ${missing_utils[*]}"
+        log_error "Please install the missing utilities"
+        exit 1
+    fi
+    log_success "All system utilities present"
+
+    # Create output directory
+    log "Creating output directory..."
+    if ! mkdir -p "$OUTPUT_DIR" 2>/dev/null; then
+        log_error "Failed to create output directory: $OUTPUT_DIR"
+        exit 1
+    fi
+    log_success "Output directory: $OUTPUT_DIR"
+
+    log "=========================================="
+    log_success "All prerequisites met - ready to scan"
+    log "=========================================="
+    echo ""
 }
 
 # List EBS snapshots with optional filtering

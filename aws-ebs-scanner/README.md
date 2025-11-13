@@ -20,19 +20,37 @@ Automated bash script for scanning EBS snapshots using Nextron Thor forensic sca
 
 ## Prerequisites
 
-1. **AWS Environment**:
-   - Running on an EC2 instance in the target region
-   - AWS CLI installed and configured
-   - IAM permissions for EC2 operations (describe-snapshots, create-volume, attach-volume, etc.)
+### System Requirements
 
-2. **Nextron Thor Scanner**:
+1. **EC2 Instance**: Must run on an EC2 instance in the target AWS region
+2. **Root Access**: Requires root/sudo privileges for mounting operations
+3. **AWS CLI**: Version 1.x or 2.x installed and configured
+4. **System Utilities**: `mountpoint`, `blkid`, `uuidgen` (usually pre-installed on Linux)
+
+### AWS Requirements
+
+1. **AWS Credentials**: Configured via IAM role (recommended) or AWS credentials file
+2. **IAM Permissions**: The following EC2 permissions are required and will be validated at startup:
+
+3. **Nextron Thor Scanner**:
    - Thor scanner installed (default path: `/opt/nextron/thor/thor64`)
+   - Thor binary must be executable (`chmod +x`)
    - Valid Thor Forensic Lab license
 
-3. **System Requirements**:
-   - Root/sudo access
-   - Available block device names (xvdf-xvdp)
-   - Sufficient disk space in `/mnt/` for mounting volumes
+### Automated Prerequisite Checks
+
+The script automatically validates all prerequisites at startup:
+
+- ✓ **Root Access**: Verifies script is run with sudo/root
+- ✓ **AWS CLI**: Checks installation and version
+- ✓ **AWS Credentials**: Validates credentials are configured
+- ✓ **EC2 Metadata**: Confirms running on EC2 instance
+- ✓ **IAM Permissions**: Tests all required EC2 permissions using AWS dry-run API
+- ✓ **Thor Scanner**: Verifies Thor binary exists and is executable
+- ✓ **System Utilities**: Checks for required utilities (mountpoint, blkid, uuidgen)
+- ✓ **Output Directory**: Validates write access to output directory
+
+If any check fails, the script will exit with a clear error message indicating what needs to be fixed.
 
 ## Installation
 
@@ -137,11 +155,28 @@ The script's operational log is saved to: `/var/log/ebs-scanner.log`
 
 ## IAM Permissions Required
 
+The script requires the following IAM permissions, which are automatically validated at startup using AWS dry-run operations:
+
+| Permission | Purpose | Validated |
+|------------|---------|-----------|
+| `ec2:DescribeSnapshots` | List EBS snapshots | ✓ Yes |
+| `ec2:DescribeVolumes` | Query volume status | ✓ Yes |
+| `ec2:CreateVolume` | Create volumes from snapshots | ✓ Yes (dry-run) |
+| `ec2:AttachVolume` | Attach volumes to EC2 instance | ✓ Yes (dry-run) |
+| `ec2:DetachVolume` | Detach volumes from instance | ✓ Yes (dry-run) |
+| `ec2:DeleteVolume` | Delete temporary volumes | ✓ Yes (dry-run) |
+| `ec2:CreateTags` | Tag created volumes | ✓ Yes (dry-run) |
+
+### IAM Policy Example
+
+Attach this policy to your EC2 instance IAM role:
+
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "EBSSnapshotScanner",
       "Effect": "Allow",
       "Action": [
         "ec2:DescribeSnapshots",
@@ -157,6 +192,22 @@ The script's operational log is saved to: `/var/log/ebs-scanner.log`
   ]
 }
 ```
+
+### Permission Validation
+
+The script validates all permissions at startup using AWS dry-run operations. If any permission is missing, you'll see output like:
+
+```
+[2025-01-XX XX:XX:XX] Checking IAM permissions...
+[2025-01-XX XX:XX:XX] AWS Account: 123456789012
+[2025-01-XX XX:XX:XX] IAM Identity: arn:aws:sts::123456789012:assumed-role/MyRole/i-1234567890abcdef0
+[2025-01-XX XX:XX:XX] SUCCESS: ✓ ec2:DescribeSnapshots
+[2025-01-XX XX:XX:XX] SUCCESS: ✓ ec2:DescribeVolumes
+[2025-01-XX XX:XX:XX] ERROR: ✗ ec2:CreateVolume - Permission denied
+...
+```
+
+This validation ensures you discover permission issues immediately, before any resources are created.
 
 ## Error Handling & Recovery
 
@@ -192,22 +243,85 @@ The script will properly clean up resources in these scenarios:
 
 ## Troubleshooting
 
-### "Could not determine EC2 instance ID"
+### Prerequisites Issues
+
+#### "AWS CLI is not installed"
+**Solution**: Install AWS CLI v1 or v2
+```bash
+# AWS CLI v2 (recommended)
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+#### "AWS credentials not configured or invalid"
+**Solutions**:
+- Use IAM role (recommended for EC2): Attach an IAM role with required permissions to the instance
+- Configure credentials: `aws configure`
+- Check existing credentials: `aws sts get-caller-identity`
+
+#### "Permission denied" for IAM actions
+**Solution**: The startup checks will show exactly which permissions are missing. Add the missing permissions to your IAM role/user policy:
+```bash
+# Example error output:
+[ERROR] ✗ ec2:CreateVolume - Permission denied
+[ERROR] ✗ ec2:AttachVolume - Permission denied
+
+# Fix: Add these permissions to your IAM policy (see IAM Policy Example above)
+```
+
+#### "Could not determine EC2 instance ID"
+**Solutions**:
 - Ensure you're running on an EC2 instance
-- Check that instance metadata service is accessible
+- Check instance metadata service: `curl http://169.254.169.254/latest/meta-data/instance-id`
+- For IMDSv2, ensure the script can access metadata service
 
-### "No available device names"
+#### "Thor scanner not found"
+**Solutions**:
+- Verify Thor installation: `ls -l /opt/nextron/thor/thor64`
+- Use `-t` option to specify custom path: `-t /custom/path/to/thor`
+- Download Thor from: https://www.nextron-systems.com/thor/
+
+#### "Thor scanner is not executable"
+**Solution**: Make Thor executable
+```bash
+chmod +x /opt/nextron/thor/thor64
+```
+
+### Runtime Issues
+
+#### "No available device names"
+**Solutions**:
 - Too many volumes already attached to the instance
-- Detach unused volumes or increase MAX_CONCURRENT limit carefully
+- Check attached volumes: `lsblk` or `aws ec2 describe-volumes --filters Name=attachment.instance-id,Values=$(ec2-metadata --instance-id | cut -d' ' -f2)`
+- Detach unused volumes
+- Consider using a larger instance type with more device slots
 
-### "Failed to mount volume"
+#### "Failed to mount volume"
+**Solutions**:
 - The volume may contain an unsupported filesystem
-- Check the logs for specific mount errors
+- Check the logs for specific mount errors: `tail -f /var/log/ebs-scanner.log`
 - Verify the snapshot contains a valid filesystem
+- Try mounting manually to diagnose: `mount -o ro /dev/xvdf1 /mnt/test`
 
-### "Thor scanner not found"
-- Verify Thor installation path
-- Use `-t` option to specify custom path
+#### "Volume did not become available in time"
+**Solutions**:
+- AWS API may be experiencing delays
+- Check AWS service health: https://status.aws.amazon.com/
+- The script will automatically retry with exponential backoff
+- Large volumes take longer to create
+
+### Debug Mode
+
+Enable debug mode for detailed troubleshooting:
+```bash
+sudo ./ebs-snapshot-scanner.sh -r us-east-1 --debug
+```
+
+This will show:
+- Detailed AWS API call attempts
+- Thor scanner command being executed
+- Step-by-step operation logs
 
 ## Thor Scanner Configuration
 
