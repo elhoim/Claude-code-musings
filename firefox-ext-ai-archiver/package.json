@@ -1,0 +1,23 @@
+{
+  "name": "claude-conversation-archiver",
+  "version": "1.0.0",
+  "description": "Firefox extension to archive Claude.ai conversations and artifacts locally",
+  "scripts": {
+    "lint": "web-ext lint",
+    "build": "web-ext build",
+    "start": "web-ext run"
+  },
+  "keywords": [
+    "firefox",
+    "extension",
+    "claude.ai",
+    "archiver",
+    "conversation",
+    "backup"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "web-ext": "^7.8.0"
+  }
+}

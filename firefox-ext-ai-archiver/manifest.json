@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Claude.ai Conversation Archiver",
+  "version": "1.0.0",
+  "description": "Archive Claude.ai conversations and artifacts to a local SQLite database",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "downloads",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://claude.ai/*"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["sql-wasm.wasm"],
+      "matches": ["https://claude.ai/*"]
+    }
+  ]
+}

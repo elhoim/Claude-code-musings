@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Conversation Archiver</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Claude Archiver</h1>
+      <p class="subtitle">Archive your Claude.ai conversations</p>
+    </header>
+
+    <div class="stats-section">
+      <h2>Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="conversation-count">0</div>
+          <div class="stat-label">Conversations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="message-count">0</div>
+          <div class="stat-label">Messages</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="artifact-count">0</div>
+          <div class="stat-label">Artifacts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-section">
+      <h2>Actions</h2>
+      <button id="archive-current" class="btn btn-primary">
+        <span class="icon">💾</span>
+        Archive Current Conversation
+      </button>
+      <button id="view-conversations" class="btn btn-secondary">
+        <span class="icon">📚</span>
+        View Archived Conversations
+      </button>
+      <button id="export-db" class="btn btn-secondary">
+        <span class="icon">📥</span>
+        Export Database
+      </button>
+    </div>
+
+    <div class="status-section">
+      <div id="status-message" class="status-message"></div>
+    </div>
+
+    <div class="conversations-list" id="conversations-list" style="display: none;">
+      <h2>Recent Conversations</h2>
+      <div id="conversations-container"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
