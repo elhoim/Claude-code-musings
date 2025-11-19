@@ -4,8 +4,8 @@
 
 class Database {
   constructor() {
-    this.dbName = 'ClaudeConversationsDB';
-    this.version = 1;
+    this.dbName = 'AIConversationsDB';
+    this.version = 2;
     this.db = null;
   }
 
@@ -30,8 +30,16 @@ class Database {
             autoIncrement: true
           });
           conversationStore.createIndex('conversation_id', 'conversation_id', { unique: true });
+          conversationStore.createIndex('platform', 'platform', { unique: false });
           conversationStore.createIndex('created_at', 'created_at', { unique: false });
           conversationStore.createIndex('updated_at', 'updated_at', { unique: false });
+        } else if (event.oldVersion < 2) {
+          // Migration for existing databases
+          const transaction = event.target.transaction;
+          const conversationStore = transaction.objectStore('conversations');
+          if (!conversationStore.indexNames.contains('platform')) {
+            conversationStore.createIndex('platform', 'platform', { unique: false });
+          }
         }
 
         // Create messages table

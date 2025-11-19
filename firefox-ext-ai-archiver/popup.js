@@ -1,4 +1,4 @@
-// Popup script for the Claude Archiver extension
+// Popup script for the AI Archiver extension
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Popup loaded');
 
@@ -34,9 +34,12 @@ async function archiveCurrentConversation() {
     const tabs = await browser.tabs.query({ active: true, currentWindow: true });
     const currentTab = tabs[0];
 
-    // Check if we're on Claude.ai
-    if (!currentTab.url.includes('claude.ai')) {
-      showStatus('Please navigate to a Claude.ai conversation first', 'error');
+    // Check if we're on a supported AI platform
+    const isClaude = currentTab.url.includes('claude.ai');
+    const isGemini = currentTab.url.includes('gemini.google.com');
+
+    if (!isClaude && !isGemini) {
+      showStatus('Please navigate to Claude.ai or Gemini first', 'error');
       return;
     }
 
@@ -129,12 +132,14 @@ function displayConversations(conversations) {
     date.className = 'conversation-date';
     date.textContent = formatDate(conv.updated_at);
 
-    const id = document.createElement('span');
-    id.className = 'conversation-id';
-    id.textContent = conv.conversation_id.substring(0, 8);
+    const platform = document.createElement('span');
+    platform.className = 'conversation-platform';
+    platform.textContent = (conv.platform || 'claude').toUpperCase();
+    platform.style.fontWeight = 'bold';
+    platform.style.color = conv.platform === 'gemini' ? '#4285f4' : '#764ba2';
 
     meta.appendChild(date);
-    meta.appendChild(id);
+    meta.appendChild(platform);
 
     item.appendChild(title);
     item.appendChild(meta);

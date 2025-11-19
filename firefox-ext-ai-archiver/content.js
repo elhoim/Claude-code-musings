@@ -2,11 +2,12 @@
 (function() {
   'use strict';
 
-  console.log('Claude Archiver: Content script loaded');
+  console.log('AI Archiver: Claude content script loaded');
 
   // Extract conversation data from the DOM
   function extractConversationData() {
     const conversationData = {
+      platform: 'claude',
       url: window.location.href,
       timestamp: new Date().toISOString(),
       conversationId: extractConversationId(),
@@ -74,11 +75,12 @@
   // Listen for messages from popup or background script
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'extractConversation') {
-      console.log('Claude Archiver: Extracting conversation...');
+      console.log('AI Archiver: Extracting Claude conversation...');
       const data = extractConversationData();
       sendResponse({ success: true, data: data });
     } else if (message.action === 'getPageInfo') {
       sendResponse({
+        platform: 'claude',
         url: window.location.href,
         title: document.title,
         conversationId: extractConversationId()
@@ -91,10 +93,10 @@
   function autoExtract() {
     // Wait for page to fully load
     if (document.readyState === 'complete') {
-      console.log('Claude Archiver: Page loaded, ready to extract');
+      console.log('AI Archiver: Claude page loaded, ready to extract');
     } else {
       window.addEventListener('load', () => {
-        console.log('Claude Archiver: Page loaded, ready to extract');
+        console.log('AI Archiver: Claude page loaded, ready to extract');
       });
     }
   }

@@ -1,15 +1,17 @@
-# Claude.ai Conversation Archiver
+# AI Conversation Archiver (Claude & Gemini)
 
-A Firefox extension that archives your Claude.ai conversations and artifacts to a local database. Never lose your important conversations, code snippets, or generated artifacts again!
+A Firefox extension that archives your Claude.ai and Google Gemini conversations with artifacts to a local database. Never lose your important conversations, code snippets, or generated artifacts again!
 
 ## Features
 
-- **Automatic Conversation Extraction**: Captures all messages in a Claude.ai conversation
-- **Artifact Archiving**: Downloads and stores code blocks, documents, and other artifacts
+- **Multi-Platform Support**: Archive conversations from both Claude.ai and Gemini
+- **Automatic Conversation Extraction**: Captures all messages from supported AI platforms
+- **Artifact Archiving**: Downloads and stores code blocks, documents, images, and other artifacts
 - **Local Storage**: Uses IndexedDB (SQLite-like structure) for local, private storage
 - **Easy Export**: Export your entire database as JSON for backup or analysis
 - **Context Menu Integration**: Right-click to quickly archive any conversation
 - **Statistics Dashboard**: Track your archived conversations, messages, and artifacts
+- **Platform Identification**: Each conversation is tagged with its source platform
 - **Privacy-Focused**: All data stays local on your machine
 
 ## Installation
@@ -36,10 +38,14 @@ Then submit to [Firefox Add-ons](https://addons.mozilla.org/developers/).
 
 ### Quick Start
 
-1. Navigate to any conversation on [Claude.ai](https://claude.ai)
+1. Navigate to any conversation on [Claude.ai](https://claude.ai) or [Gemini](https://gemini.google.com)
 2. Click the extension icon in your toolbar
 3. Click "Archive Current Conversation"
 4. Your conversation is now safely archived!
+
+**Supported Platforms:**
+- Claude.ai (https://claude.ai)
+- Google Gemini (https://gemini.google.com)
 
 ### Features in Detail
 
@@ -51,16 +57,17 @@ Then submit to [Firefox Add-ons](https://addons.mozilla.org/developers/).
 - View statistics and confirmation message
 
 **Method 2: Context Menu**
-- Right-click anywhere on a Claude.ai conversation page
-- Select "Archive this Claude conversation"
+- Right-click anywhere on a Claude.ai or Gemini conversation page
+- Select "Archive this Claude conversation" or "Archive this Gemini conversation"
 - Receive a notification when archiving completes
 
 #### Viewing Archived Conversations
 
 1. Click the extension icon
 2. Click "View Archived Conversations"
-3. Browse your archived conversations by date
-4. Click any conversation to open it on Claude.ai
+3. Browse your archived conversations by date and platform
+4. Each conversation shows its platform (CLAUDE or GEMINI) in color-coded badges
+5. Click any conversation to open it on the respective platform
 
 #### Exporting Your Data
 
@@ -79,7 +86,8 @@ The extension uses IndexedDB with the following structure:
 
 ### Conversations Table
 - `id`: Auto-increment primary key
-- `conversation_id`: Unique Claude conversation ID
+- `conversation_id`: Unique conversation ID
+- `platform`: Platform identifier ('claude' or 'gemini')
 - `url`: Full URL to the conversation
 - `title`: Conversation title
 - `created_at`: ISO 8601 timestamp
@@ -113,48 +121,52 @@ The extension requires the following permissions:
 - `storage`: For IndexedDB access
 - `unlimitedStorage`: To store large conversations
 - `downloads`: To export the database
-- `activeTab`: To extract content from Claude.ai
+- `activeTab`: To extract content from AI platforms
+- `contextMenus`: For right-click archiving menu
 - `https://claude.ai/*`: Host permission for Claude.ai
+- `https://gemini.google.com/*`: Host permission for Google Gemini
 
 ### Architecture
 
 ```
-┌─────────────────┐
-│   Content       │  Extracts conversation data from DOM
-│   Script        │  Sends to background script
-│  (content.js)   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Background    │  Handles database operations
-│   Script        │  Manages context menu
-│ (background.js) │  Processes save/retrieve requests
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Database      │  IndexedDB wrapper
-│   Module        │  CRUD operations
-│ (database.js)   │  Export functionality
-└─────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Popup UI      │  User interface
-│  (popup.html/   │  Statistics display
-│   .js/.css)     │  Action buttons
-└─────────────────┘
+┌──────────────────┐  ┌──────────────────┐
+│  Content Script  │  │  Content Script  │
+│   (Claude.ai)    │  │    (Gemini)      │
+│  content.js      │  │ content-gemini.js│
+└────────┬─────────┘  └────────┬─────────┘
+         │                     │
+         └──────────┬──────────┘
+                    ▼
+         ┌─────────────────┐
+         │   Background    │  Handles database operations
+         │   Script        │  Manages context menus
+         │ (background.js) │  Processes save/retrieve
+         └────────┬────────┘
+                  │
+                  ▼
+         ┌─────────────────┐
+         │   Database      │  IndexedDB wrapper
+         │   Module        │  CRUD operations
+         │ (database.js)   │  Multi-platform support
+         └─────────────────┘
+                  │
+                  ▼
+         ┌─────────────────┐
+         │   Popup UI      │  User interface
+         │  (popup.html/   │  Platform badges
+         │   .js/.css)     │  Statistics display
+         └─────────────────┘
 ```
 
 ### File Structure
 
 ```
 firefox-ext-ai-archiver/
-├── manifest.json          # Extension configuration
+├── manifest.json          # Extension configuration (v2.0.0)
 ├── background.js          # Background service worker
 ├── content.js            # Content script for Claude.ai
-├── database.js           # IndexedDB wrapper module
+├── content-gemini.js     # Content script for Gemini
+├── database.js           # IndexedDB wrapper module (v2)
 ├── popup.html            # Extension popup UI
 ├── popup.css             # Popup styling
 ├── popup.js              # Popup functionality
@@ -211,13 +223,15 @@ firefox-ext-ai-archiver/
 **View IndexedDB:**
 - Open Firefox DevTools (F12)
 - Go to "Storage" tab
-- Navigate to "IndexedDB" > "ClaudeConversationsDB"
+- Navigate to "IndexedDB" > "AIConversationsDB"
 
 **Common Issues:**
 
-1. **Extraction fails**: Check if Claude.ai's DOM structure has changed
+1. **Extraction fails**: Check if the AI platform's DOM structure has changed
+   - Claude.ai and Gemini may update their UI, requiring content script updates
 2. **Database errors**: Clear IndexedDB and try again
-3. **Permission errors**: Ensure extension has proper permissions
+   - Database migration from v1 to v2 should happen automatically
+3. **Permission errors**: Ensure extension has proper permissions for both platforms
 
 ## Privacy & Security
 
@@ -229,15 +243,21 @@ firefox-ext-ai-archiver/
 ## Limitations
 
 - Currently works only on Firefox (Chrome version would require adaptation)
-- Relies on Claude.ai's DOM structure (may break with UI updates)
+- Relies on AI platforms' DOM structures (may break with UI updates)
+  - Claude.ai DOM selectors may need updates
+  - Gemini DOM selectors may need updates as Google changes the UI
 - Large conversations may take a moment to archive
 - IndexedDB has browser-imposed storage limits (usually several GB)
+- Gemini conversation IDs are generated if not available in URL
 
 ## Future Enhancements
 
 Potential features for future versions:
 
+- [x] Multi-platform support (Claude.ai & Gemini) ✓
+- [ ] Additional AI platforms (ChatGPT, Perplexity, etc.)
 - [ ] Full-text search across archived conversations
+- [ ] Platform-specific filters and sorting
 - [ ] Tag and categorize conversations
 - [ ] Bulk export/import functionality
 - [ ] Markdown export for individual conversations
@@ -263,9 +283,10 @@ MIT License - See LICENSE file for details
 
 ## Acknowledgments
 
-- Built for the Claude.ai community
+- Built for the AI community (Claude.ai & Gemini users)
 - Inspired by the need to preserve important AI conversations
 - Uses IndexedDB for efficient local storage
+- Special thanks to contributors who requested multi-platform support
 
 ## Support
 
@@ -275,6 +296,18 @@ For issues, questions, or feature requests:
 - Review the debugging section above
 
 ## Changelog
+
+### Version 2.0.0 (Multi-Platform Support)
+- **NEW**: Google Gemini support
+- **NEW**: Platform identification for all conversations
+- **NEW**: Separate content scripts for Claude.ai and Gemini
+- **NEW**: Platform-specific context menus
+- **NEW**: Color-coded platform badges in UI
+- Updated database schema (v2) with platform field
+- Database name changed to AIConversationsDB
+- Automatic migration from v1 to v2
+- Enhanced conversation extraction for Gemini
+- Improved artifact detection (images, code blocks)
 
 ### Version 1.0.0 (Initial Release)
 - Conversation extraction from Claude.ai

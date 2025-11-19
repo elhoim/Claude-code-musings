@@ -1,7 +1,7 @@
 // Background script for handling database operations
 import Database from './database.js';
 
-console.log('Claude Archiver: Background script loaded');
+console.log('AI Archiver: Background script loaded');
 
 const db = new Database();
 
@@ -51,11 +51,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function handleSaveConversation(conversationData) {
-  console.log('Saving conversation:', conversationData.conversationId);
+  console.log('Saving conversation:', conversationData.conversationId, 'Platform:', conversationData.platform);
 
   // Save conversation metadata
   const conversationId = await db.saveConversation({
     conversation_id: conversationData.conversationId,
+    platform: conversationData.platform || 'claude',
     url: conversationData.url,
     title: conversationData.title || 'Untitled Conversation',
     created_at: conversationData.timestamp,
@@ -106,7 +107,7 @@ async function handleExportDatabase() {
 
   const downloadId = await browser.downloads.download({
     url: url,
-    filename: `claude-conversations-${new Date().toISOString().split('T')[0]}.db`,
+    filename: `ai-conversations-${new Date().toISOString().split('T')[0]}.json`,
     saveAs: true
   });
 
@@ -117,16 +118,26 @@ async function handleGetStats() {
   return await db.getStats();
 }
 
-// Context menu for quick archiving
+// Context menu for quick archiving - Claude
 browser.contextMenus.create({
-  id: 'archive-conversation',
+  id: 'archive-claude-conversation',
   title: 'Archive this Claude conversation',
   contexts: ['page'],
   documentUrlPatterns: ['https://claude.ai/*']
 });
 
+// Context menu for quick archiving - Gemini
+browser.contextMenus.create({
+  id: 'archive-gemini-conversation',
+  title: 'Archive this Gemini conversation',
+  contexts: ['page'],
+  documentUrlPatterns: ['https://gemini.google.com/*']
+});
+
 browser.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'archive-conversation') {
+  if (info.menuItemId === 'archive-claude-conversation' || info.menuItemId === 'archive-gemini-conversation') {
+    const platform = info.menuItemId.includes('claude') ? 'Claude' : 'Gemini';
+
     browser.tabs.sendMessage(tab.id, { action: 'extractConversation' })
       .then(response => {
         if (response.success) {
@@ -136,15 +147,15 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       .then(() => {
         browser.notifications.create({
           type: 'basic',
-          title: 'Claude Archiver',
-          message: 'Conversation archived successfully!'
+          title: 'AI Archiver',
+          message: `${platform} conversation archived successfully!`
         });
       })
       .catch(err => {
         console.error('Error archiving conversation:', err);
         browser.notifications.create({
           type: 'basic',
-          title: 'Claude Archiver Error',
+          title: 'AI Archiver Error',
           message: 'Failed to archive conversation: ' + err.message
         });
       });

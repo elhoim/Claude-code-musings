@@ -1,16 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Claude.ai Conversation Archiver",
-  "version": "1.0.0",
-  "description": "Archive Claude.ai conversations and artifacts to a local SQLite database",
+  "name": "AI Conversation Archiver (Claude & Gemini)",
+  "version": "2.0.0",
+  "description": "Archive Claude.ai and Gemini conversations with artifacts to a local database",
   "permissions": [
     "storage",
     "unlimitedStorage",
     "downloads",
-    "activeTab"
+    "activeTab",
+    "contextMenus"
   ],
   "host_permissions": [
-    "https://claude.ai/*"
+    "https://claude.ai/*",
+    "https://gemini.google.com/*"
   ],
   "background": {
     "scripts": ["background.js"],
@@ -20,6 +22,11 @@
     {
       "matches": ["https://claude.ai/*"],
       "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["content-gemini.js"],
       "run_at": "document_idle"
     }
   ],
@@ -39,7 +46,7 @@
   "web_accessible_resources": [
     {
       "resources": ["sql-wasm.wasm"],
-      "matches": ["https://claude.ai/*"]
+      "matches": ["https://claude.ai/*", "https://gemini.google.com/*"]
     }
   ]
 }
