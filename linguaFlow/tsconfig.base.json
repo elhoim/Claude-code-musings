@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "paths": {
+      "@linguaflow/shared": ["./packages/shared/src"],
+      "@linguaflow/ui": ["./packages/ui/src"],
+      "@linguaflow/api-client": ["./packages/api-client/src"],
+      "@linguaflow/srs-engine": ["./packages/srs-engine/src"],
+      "@linguaflow/eslint-config": ["./packages/eslint-config"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", ".turbo"]
+}

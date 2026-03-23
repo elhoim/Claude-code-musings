@@ -1,0 +1,29 @@
+{
+  "name": "@linguaflow/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:windows": "react-native start --platform windows",
+    "dev:macos": "react-native start --platform macos",
+    "build:windows": "react-native run-windows --release",
+    "build:macos": "react-native run-macos --release",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@linguaflow/shared": "workspace:*",
+    "@linguaflow/ui": "workspace:*",
+    "@linguaflow/api-client": "workspace:*",
+    "@linguaflow/srs-engine": "workspace:*",
+    "react": "18.2.0",
+    "react-native": "0.74.0",
+    "react-native-windows": "^0.74.0",
+    "react-native-macos": "^0.74.0",
+    "zustand": "^4.5.0",
+    "axios": "^1.7.0"
+  },
+  "devDependencies": {
+    "@types/react": "~18.2.0",
+    "typescript": "^5.4.5"
+  }
+}

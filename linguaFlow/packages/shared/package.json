@@ -1,0 +1,21 @@
+{
+  "name": "@linguaflow/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  }
+}
