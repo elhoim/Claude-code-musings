@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface Props {
-  totalSeconds: number;
+  seconds: number;
   isRunning: boolean;
   onComplete: () => void;
 }
 
-export function Timer({ totalSeconds, isRunning, onComplete }: Props) {
-  const [remaining, setRemaining] = useState(totalSeconds);
+export function Timer({ seconds, isRunning, onComplete }: Props) {
+  const [remaining, setRemaining] = useState(seconds);
 
   useEffect(() => {
-    setRemaining(totalSeconds);
-  }, [totalSeconds]);
+    setRemaining(seconds);
+  }, [seconds]);
+
+  const stableOnComplete = useCallback(onComplete, [onComplete]);
 
   useEffect(() => {
     if (!isRunning || remaining <= 0) return;
@@ -20,31 +22,63 @@ export function Timer({ totalSeconds, isRunning, onComplete }: Props) {
       setRemaining((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          onComplete();
+          stableOnComplete();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [isRunning, remaining, onComplete]);
+  }, [isRunning, remaining, stableOnComplete]);
 
-  const progress = remaining / totalSeconds;
-  const color = progress > 0.5 ? '#2563EB' : progress > 0.25 ? '#F59E0B' : '#EF4444';
+  const progress = remaining / seconds;
+  const minutes = Math.floor(remaining / 60);
+  const secs = remaining % 60;
+  const display = `${minutes}:${secs.toString().padStart(2, '0')}`;
 
+  const color = progress > 0.5 ? '#4F46E5' : progress > 0.25 ? '#F59E0B' : '#EF4444';
+
+  // Circular progress placeholder (using bar for now)
   return (
     <View style={styles.container}>
-      <Text style={[styles.time, { color }]}>{remaining}s</Text>
+      <View style={styles.circle}>
+        <Text style={[styles.time, { color }]}>{display}</Text>
+      </View>
       <View style={styles.barBg}>
-        <View style={[styles.barFill, { width: `${progress * 100}%`, backgroundColor: color }]} />
+        <View
+          style={[styles.barFill, { width: `${progress * 100}%`, backgroundColor: color }]}
+        />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { alignItems: 'center', marginBottom: 20 },
-  time: { fontSize: 42, fontWeight: '700', marginBottom: 8 },
-  barBg: { width: '100%', height: 6, backgroundColor: '#E5E7EB', borderRadius: 3 },
-  barFill: { height: 6, borderRadius: 3 },
+  container: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  circle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 3,
+    borderColor: '#E5E7EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  time: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  barBg: {
+    width: 80,
+    height: 4,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 2,
+  },
+  barFill: {
+    height: 4,
+    borderRadius: 2,
+  },
 });
