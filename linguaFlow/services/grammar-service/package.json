@@ -8,6 +8,7 @@
     "start": "node dist/server.js",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
+    "db:seed": "tsx src/db/seeds/run-seed.ts",
     "test": "vitest run",
     "lint": "eslint src/"
   },
