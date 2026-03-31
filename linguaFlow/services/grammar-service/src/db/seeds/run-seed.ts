@@ -3,6 +3,9 @@ import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '../schema.js';
 import { SPANISH_A1_GRAMMAR_NODES, buildGrammarEdges } from './spanish-a1-grammar.js';
+import { FRENCH_A1_GRAMMAR_NODES, buildGrammarEdges as buildFrenchEdges } from './french-a1-grammar.js';
+import { FLEMISH_A1_GRAMMAR_NODES, buildGrammarEdges as buildFlemishEdges } from './flemish-a1-grammar.js';
+import { ENGLISH_A1_GRAMMAR_NODES, buildGrammarEdges as buildEnglishEdges } from './english-a1-grammar.js';
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://linguaflow:linguaflow@localhost:5432/linguaflow_grammar';
 
@@ -12,55 +15,71 @@ async function seed() {
   const connection = postgres(DATABASE_URL);
   const db = drizzle(connection, { schema });
 
-  // Insert grammar nodes
-  const slugToId = new Map<string, string>();
+  // Seed all languages
+  const languageSeeds = [
+    { language: 'es', nodes: SPANISH_A1_GRAMMAR_NODES, buildEdges: buildGrammarEdges },
+    { language: 'fr', nodes: FRENCH_A1_GRAMMAR_NODES, buildEdges: buildFrenchEdges },
+    { language: 'nl-BE', nodes: FLEMISH_A1_GRAMMAR_NODES, buildEdges: buildFlemishEdges },
+    { language: 'en', nodes: ENGLISH_A1_GRAMMAR_NODES, buildEdges: buildEnglishEdges },
+  ];
 
-  for (const nodeData of SPANISH_A1_GRAMMAR_NODES) {
-    const { prerequisites: _, ...fields } = nodeData;
+  let totalNodes = 0;
+  let totalEdges = 0;
 
-    const [node] = await db
-      .insert(schema.grammarNodes)
-      .values({
-        language: 'es',
-        slug: fields.slug,
-        name: fields.name,
-        nameInTarget: fields.nameInTarget,
-        cefrLevel: fields.cefrLevel,
-        category: fields.category,
-        shortDescription: fields.shortDescription,
-        fullExplanation: fields.fullExplanation,
-        prerequisites: nodeData.prerequisites,
-        examples: fields.examples,
-        order: fields.order,
-      })
-      .returning();
+  for (const { language, nodes, buildEdges } of languageSeeds) {
+    console.log(`\n  Seeding language: ${language}`);
+    const slugToId = new Map<string, string>();
 
-    slugToId.set(node.slug, node.id);
-    console.log(`  Node: ${node.name} (${node.slug})`);
-  }
+    for (const nodeData of nodes) {
+      const { prerequisites: _, ...fields } = nodeData;
 
-  // Insert edges based on prerequisites
-  const edgeDefs = buildGrammarEdges(SPANISH_A1_GRAMMAR_NODES);
+      const [node] = await db
+        .insert(schema.grammarNodes)
+        .values({
+          language,
+          slug: fields.slug,
+          name: fields.name,
+          nameInTarget: fields.nameInTarget,
+          cefrLevel: fields.cefrLevel,
+          category: fields.category,
+          shortDescription: fields.shortDescription,
+          fullExplanation: fields.fullExplanation,
+          prerequisites: nodeData.prerequisites,
+          examples: fields.examples,
+          order: fields.order,
+        })
+        .returning();
 
-  for (const edge of edgeDefs) {
-    const fromId = slugToId.get(edge.fromSlug);
-    const toId = slugToId.get(edge.toSlug);
-
-    if (!fromId || !toId) {
-      console.warn(`  Skipping edge ${edge.fromSlug} → ${edge.toSlug}: missing node`);
-      continue;
+      slugToId.set(node.slug, node.id);
+      console.log(`    Node: ${node.name} (${node.slug})`);
     }
 
-    await db.insert(schema.grammarEdges).values({
-      fromNodeId: fromId,
-      toNodeId: toId,
-      relationship: 'prerequisite',
-    });
+    // Insert edges based on prerequisites
+    const edgeDefs = buildEdges(nodes);
 
-    console.log(`  Edge: ${edge.fromSlug} → ${edge.toSlug}`);
+    for (const edge of edgeDefs) {
+      const fromId = slugToId.get(edge.fromSlug);
+      const toId = slugToId.get(edge.toSlug);
+
+      if (!fromId || !toId) {
+        console.warn(`    Skipping edge ${edge.fromSlug} → ${edge.toSlug}: missing node`);
+        continue;
+      }
+
+      await db.insert(schema.grammarEdges).values({
+        fromNodeId: fromId,
+        toNodeId: toId,
+        relationship: 'prerequisite',
+      });
+
+      console.log(`    Edge: ${edge.fromSlug} → ${edge.toSlug}`);
+    }
+
+    totalNodes += slugToId.size;
+    totalEdges += edgeDefs.length;
   }
 
-  console.log(`Grammar service seed complete! ${slugToId.size} nodes, ${edgeDefs.length} edges`);
+  console.log(`\nGrammar service seed complete! ${totalNodes} nodes, ${totalEdges} edges`);
   await connection.end();
 }
 
