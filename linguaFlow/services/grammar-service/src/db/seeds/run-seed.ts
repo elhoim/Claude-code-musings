@@ -2,10 +2,11 @@ import 'dotenv/config';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '../schema.js';
-import { SPANISH_A1_GRAMMAR_NODES, buildGrammarEdges } from './spanish-a1-grammar.js';
-import { FRENCH_A1_GRAMMAR_NODES, buildGrammarEdges as buildFrenchEdges } from './french-a1-grammar.js';
-import { FLEMISH_A1_GRAMMAR_NODES, buildGrammarEdges as buildFlemishEdges } from './flemish-a1-grammar.js';
-import { ENGLISH_A1_GRAMMAR_NODES, buildGrammarEdges as buildEnglishEdges } from './english-a1-grammar.js';
+import { buildGrammarEdges } from './grammar-seed-types.js';
+import { SPANISH_A1_GRAMMAR_NODES } from './spanish-a1-grammar.js';
+import { FRENCH_A1_GRAMMAR_NODES } from './french-a1-grammar.js';
+import { FLEMISH_A1_GRAMMAR_NODES } from './flemish-a1-grammar.js';
+import { ENGLISH_A1_GRAMMAR_NODES } from './english-a1-grammar.js';
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://linguaflow:linguaflow@localhost:5432/linguaflow_grammar';
 
@@ -17,16 +18,16 @@ async function seed() {
 
   // Seed all languages
   const languageSeeds = [
-    { language: 'es', nodes: SPANISH_A1_GRAMMAR_NODES, buildEdges: buildGrammarEdges },
-    { language: 'fr', nodes: FRENCH_A1_GRAMMAR_NODES, buildEdges: buildFrenchEdges },
-    { language: 'nl-BE', nodes: FLEMISH_A1_GRAMMAR_NODES, buildEdges: buildFlemishEdges },
-    { language: 'en', nodes: ENGLISH_A1_GRAMMAR_NODES, buildEdges: buildEnglishEdges },
+    { language: 'es', nodes: SPANISH_A1_GRAMMAR_NODES },
+    { language: 'fr', nodes: FRENCH_A1_GRAMMAR_NODES },
+    { language: 'nl-BE', nodes: FLEMISH_A1_GRAMMAR_NODES },
+    { language: 'en', nodes: ENGLISH_A1_GRAMMAR_NODES },
   ];
 
   let totalNodes = 0;
   let totalEdges = 0;
 
-  for (const { language, nodes, buildEdges } of languageSeeds) {
+  for (const { language, nodes } of languageSeeds) {
     console.log(`\n  Seeding language: ${language}`);
     const slugToId = new Map<string, string>();
 
@@ -55,7 +56,7 @@ async function seed() {
     }
 
     // Insert edges based on prerequisites
-    const edgeDefs = buildEdges(nodes);
+    const edgeDefs = buildGrammarEdges(nodes);
 
     for (const edge of edgeDefs) {
       const fromId = slugToId.get(edge.fromSlug);

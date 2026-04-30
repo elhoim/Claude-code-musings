@@ -3,42 +3,8 @@
  * Interactive graded readers with vocabulary annotations and branching choices
  */
 
-export interface StorySegmentSeed {
-  order: number;
-  text: string;
-  translation: string;
-  annotations: {
-    startIndex: number;
-    endIndex: number;
-    word: string;
-    definition: string;
-    partOfSpeech?: string;
-  }[];
-  choices?: {
-    id: string;
-    text: string;
-    translation: string;
-    nextSegmentOrder: number; // resolved to actual segment IDs at seed time
-  }[];
-  promptForUser?: {
-    type: string;
-    instruction: string;
-    minWords?: number;
-  };
-}
-
-export interface StorySeed {
-  language: string;
-  cefrLevel: string;
-  title: string;
-  description: string;
-  genre: string;
-  isTemplate: boolean;
-  estimatedMinutes: number;
-  vocabularyTargets: string[];
-  grammarTargets: string[];
-  segments: StorySegmentSeed[];
-}
+import type { StorySeed } from './story-seed-types';
+export type { StorySegmentSeed, StorySeed } from './story-seed-types';
 
 export const SPANISH_A1_STORIES: StorySeed[] = [
   // ── Story 1: Un Día en la Ciudad ──

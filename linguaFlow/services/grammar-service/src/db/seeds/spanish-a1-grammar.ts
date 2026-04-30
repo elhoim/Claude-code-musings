@@ -3,23 +3,9 @@
  * Grammar nodes and prerequisite edges for the A1 level
  */
 
-export interface GrammarNodeSeed {
-  slug: string;
-  name: string;
-  nameInTarget: string;
-  cefrLevel: string;
-  category: string;
-  shortDescription: string;
-  fullExplanation: string;
-  prerequisites: string[]; // slugs of prerequisite nodes
-  examples: {
-    target: string;
-    native: string;
-    highlightRange: [number, number];
-    notes?: string;
-  }[];
-  order: number;
-}
+import type { GrammarNodeSeed } from './grammar-seed-types';
+export { buildGrammarEdges } from './grammar-seed-types';
+export type { GrammarNodeSeed } from './grammar-seed-types';
 
 export const SPANISH_A1_GRAMMAR_NODES: GrammarNodeSeed[] = [
   // ── Nouns & Articles ──
@@ -315,16 +301,3 @@ export const SPANISH_A1_GRAMMAR_NODES: GrammarNodeSeed[] = [
   },
 ];
 
-/**
- * Edges are derived from the prerequisites array in each node.
- * They map slug references to actual DB-generated UUIDs at seed time.
- */
-export function buildGrammarEdges(nodes: GrammarNodeSeed[]): { fromSlug: string; toSlug: string }[] {
-  const edges: { fromSlug: string; toSlug: string }[] = [];
-  for (const node of nodes) {
-    for (const prereqSlug of node.prerequisites) {
-      edges.push({ fromSlug: prereqSlug, toSlug: node.slug });
-    }
-  }
-  return edges;
-}

@@ -8,10 +8,11 @@ export const SUPPORTED_LANGUAGES = {
   zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
   ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
   en: { name: 'English', nativeName: 'English', flag: '🇺🇸' },
+  'nl-BE': { name: 'Flemish', nativeName: 'Vlaams', flag: '🇧🇪' },
 } as const;
 
 export type LanguageCode = keyof typeof SUPPORTED_LANGUAGES;
 export const LANGUAGE_CODES = Object.keys(SUPPORTED_LANGUAGES) as LanguageCode[];
 
 /** Languages available for learning in Phase 1 */
-export const PHASE1_LANGUAGES: LanguageCode[] = ['es'];
+export const PHASE1_LANGUAGES: LanguageCode[] = ['es', 'fr', 'nl-BE', 'en'];
