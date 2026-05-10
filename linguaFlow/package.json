@@ -1,0 +1,28 @@
+{
+  "name": "linguaflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LinguaFlow — Language Learning App",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:seed": "pnpm --filter @linguaflow/lesson-service db:seed && pnpm --filter @linguaflow/grammar-service db:seed && pnpm --filter @linguaflow/story-service db:seed",
+    "docker:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infrastructure/docker/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "@linguaflow/eslint-config": "workspace:*",
+    "prettier": "^3.2.5",
+    "turbo": "^2.3.0",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@9.1.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
